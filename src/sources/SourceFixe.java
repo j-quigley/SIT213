@@ -30,6 +30,13 @@ public class SourceFixe extends Source<Boolean>{
     		}
         }
     }
+    /**
+     * retourne l'information générée
+     * @return une information
+     */
+    public Information<Boolean> getInformationGeneree(){
+    	return informationGeneree;
+    }
     
     /**
      * retourne l'information émise

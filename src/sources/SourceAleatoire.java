@@ -35,7 +35,10 @@ public class SourceAleatoire extends Source<Boolean>{
     public Information<Boolean> getInformationEmise(){
     	return informationEmise;
     }
-	
+    public Information<Boolean> getInformationGeneree(){
+    	return informationGeneree;
+    }
+    
 	public static void main(String[] args) {
         SourceAleatoire a = new SourceAleatoire(10);
         System.out.println(a.informationGeneree.toString());

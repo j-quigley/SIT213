@@ -43,9 +43,9 @@
       private		   String codage = "RZ";
    /** indique au simulateur le nombre d'Žchantillon ˆ utiliser **/
       private		   int nbEchantillons = 30;
-   /** indique au simulateur le nombre d'Žchantillon ˆ utiliser **/
+   /** indique au simulateur la tension du niveau 0 **/
       private		   float aMin = 0.0f;
-   /** indique au simulateur le nombre d'Žchantillon ˆ utiliser **/
+   /** indique au simulateur la tension du niveau 1 **/
       private		   float aMax = 1.0f;
    	
    /** le  composant Source de la chaine de transmission */
@@ -114,8 +114,8 @@
 			//////////////
 			//Affichange//
 			//////////////
-			sondeSource = new SondeLogique("Sonde Source", 10);
-			sondeDestination = new SondeLogique("Sonde Destination", 10);
+			sondeSource = new SondeLogique("Sonde Source", 200);
+			sondeDestination = new SondeLogique("Sonde Destination", 200);
 			sondeSourceAnalogique = new SondeAnalogique("Sonde Source Analogique");
 			sondeDestinationAnalogique = new SondeAnalogique("Sonde Destination Analogique");
 			//Connexion//

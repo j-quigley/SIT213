@@ -41,11 +41,11 @@ public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 							informationCodee.add(aMax);
 						}
 						else{
-							informationCodee.add(aMin);
+							informationCodee.add(0.0f);
 						}
 					}
 					else{
-						informationCodee.add(aMin);
+						informationCodee.add(0.0f);
 					}
 				}
 			}

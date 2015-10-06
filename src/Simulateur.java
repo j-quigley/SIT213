@@ -40,13 +40,15 @@
    /** la chaîne de caractères correspondant à m dans l'argument -mess m */
       private          String messageString = "100";
    /** indique au simulateur le type de codage utilisŽ **/
-      private		   String codage = "RZ";
+      private		   String codage = "NRZ";
    /** indique au simulateur le nombre d'Žchantillon ˆ utiliser **/
       private		   int nbEchantillons = 30;
    /** indique au simulateur la tension du niveau 0 **/
-      private		   float aMin = 0.0f;
+      private		   float aMin = -1.0f;
    /** indique au simulateur la tension du niveau 1 **/
       private		   float aMax = 1.0f;
+      /** indique au simulateur la variance du bruit **/
+      private		   float varBruit = 1.0f;
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
@@ -71,8 +73,10 @@
       private			  Transmetteur <Float, Float>  transmetteurAnalogique = null;
    /** le  composant Recepteur de la chaine de transmission */
       private			  RecepteurAnalogique recepteurAnalogique = null;
-      
-   	
+   /** le  composant Transmetteur analogique parfait logique de la chaine de transmission */
+      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null;    
+   /** le composant Sonde analogique de la Destination de la chaine de transmission avec bruit*/
+      private SondeAnalogique sondeDestinationAnalogiqueBruit = null;
    
    /** Le constructeur de Simulateur construit une chaîne de transmission composée d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la méthode analyseArguments]...  
    * <br> Les différents composants de la chaîne de transmission (Source, Transmetteur(s), Destination, Sonde(s) de visualisation) sont créés et connectés.
@@ -99,9 +103,9 @@
 			source.connecter(transmetteurLogique);
 			transmetteurLogique.connecter(destination);
 			
-			/////////////////////////
-			//Simulation Analogique//
-			/////////////////////////
+			//////////////////////////////////
+			//Simulation Analogique Parfaite//
+			//////////////////////////////////
 			emetteurAnalogique = new EmetteurAnalogique(aMin, aMax, codage, nbEchantillons);
 			transmetteurAnalogique = new TransmetteurParfaitAnalogique();
 			recepteurAnalogique = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
@@ -111,18 +115,28 @@
 			transmetteurAnalogique.connecter(recepteurAnalogique);
 			recepteurAnalogique.connecter(destination);
 			
+			/////////////////////////////////
+			//Simulation Analogique BruitŽe//
+			/////////////////////////////////
+			//transmetteurAnalogiqueBruite = new TransmetteurAnalogiqueBruite(varBruit);
+			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);
+			transmetteurAnalogiqueBruite.connecter(recepteurAnalogique);
+			
+			
 			//////////////
-			//Affichange//
+			//Affichage//
 			//////////////
 			sondeSource = new SondeLogique("Sonde Source", 200);
 			sondeDestination = new SondeLogique("Sonde Destination", 200);
 			sondeSourceAnalogique = new SondeAnalogique("Sonde Source Analogique");
 			sondeDestinationAnalogique = new SondeAnalogique("Sonde Destination Analogique");
+			sondeDestinationAnalogiqueBruit = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
 			//Connexion//
 			source.connecter(sondeSource);
 			transmetteurLogique.connecter(sondeDestination);
 			emetteurAnalogique.connecter(sondeSourceAnalogique);
 			transmetteurAnalogique.connecter(sondeDestinationAnalogique);	
+			transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruit);
       }
    
    
@@ -230,7 +244,17 @@
             	else{
             		throw new ArgumentsException("Valeur de parametre -amp invalide : " + args[i]);
             	}
-            }                  
+            }             
+            else if (args[i].matches("-var")){
+            	i++; 
+            	if(args[i].matches("[0-9].[1-9]+")){
+            		varBruit = Float.parseFloat(args[i]);
+            		i++;
+            	}
+            	else{
+               		throw new ArgumentsException("Valeur de parametre -var invalide : " + args[i]);	
+            	}
+            }
             else throw new ArgumentsException("Option invalide :"+ args[i]);
          }
       
@@ -251,6 +275,7 @@
 	         emetteurAnalogique.coder();
 	         emetteurAnalogique.emettre();
 	         transmetteurAnalogique.emettre();
+	         transmetteurAnalogiqueBruite.emettre();
 	         recepteurAnalogique.decoder();
 	         recepteurAnalogique.emettre();
     	 }

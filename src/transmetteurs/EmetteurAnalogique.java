@@ -59,11 +59,11 @@ public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 							informationCodee.add(aMax);
 						}
 						else{
-							informationCodee.add(aMin);
+							informationCodee.add(0.0f);
 						}
 					}
 					else{
-						informationCodee.add(aMin);
+						informationCodee.add(0.0f);
 					}
 				}
 			}
@@ -85,29 +85,13 @@ public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 				for(int j = 1; j<=nbEchantillons; j++){
 					if(informationRecue.iemeElement(i) == true){
 						if(j<=nbEchantillons/3){
-							if(i==0){
-								informationCodee.add(aMin+((aMax-aMin)/(nbEchantillons/3))*(j-1));
-							}
-							else if(informationRecue.iemeElement(i-1)==true){
-								informationCodee.add(aMax);
-							}
-							else{
-								informationCodee.add(aMin+((aMax-aMin)/(nbEchantillons/3))*(j-1));
-							}
+							informationCodee.add(aMin+((aMax-aMin)/(nbEchantillons/3))*(j-1));
 						}
 						else if((j>nbEchantillons/3)&&(j<=nbEchantillons/3*2)){
 							informationCodee.add(aMax);
 						}
 						else{
-							if(i==informationRecue.nbElements()-1){
-								informationCodee.add(aMin+((aMax-aMin)/(nbEchantillons/3))*(nbEchantillons-j));
-							}
-							else if(informationRecue.iemeElement(i+1)==true){
-								informationCodee.add(aMax);
-							}
-							else{
-								informationCodee.add(aMin+((aMax-aMin)/(nbEchantillons/3))*(nbEchantillons-j));
-							}
+							informationCodee.add(aMin+((aMax-aMin)/(nbEchantillons/3))*(nbEchantillons-j));
 						}
 					}
 					else{

@@ -10,11 +10,25 @@ import destinations.DestinationInterface;
 
 public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 
+	/**
+	 * aMin, aMax : amplitude minimum et maximum du signal
+	 * codage : type de codage du signal
+	 * nbEchantillons : nombre d'Žchantillons pour le codage
+	 * informationCodee : tableau contenant l'information codee
+	 */
 	private float aMin, aMax;
 	private String codage;
 	private int nbEchantillons;
 	private Information <Float> informationCodee;
 	
+	/**
+	 * @param aMin
+	 * @param aMax
+	 * @param codage
+	 * @param nbEchantillons
+	 * 
+	 * Constructeur de l'EmetteurAnalogique qui recoit des informations de type booleen et renvoit des informations de type float
+	 */
 	public EmetteurAnalogique(float aMin, float aMax, String codage, int nbEchantillons) {
 		super();
 	    informationRecue = new Information<Boolean>();
@@ -26,12 +40,16 @@ public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 	    this.nbEchantillons = nbEchantillons;
 	}
 		
+	@Override
 	public  void recevoir(Information <Boolean> information) throws InformationNonConforme{
 		for(int i = 0; i<information.nbElements(); i++){
 			informationRecue.add(information.iemeElement(i));
 		}
 	}
 	
+	/**
+	 * Fonction de codage RZ,NRZ ou NRZT
+	 */
 	public void coder(){
 		if(codage.equals("RZ")){
 			for(int i = 0; i<informationRecue.nbElements(); i++){
@@ -100,12 +118,21 @@ public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 		}	
 	}
 
+	@Override
 	public void emettre() throws InformationNonConforme {
-		// émission vers les composants connectés  
+		// ï¿½mission vers les composants connectï¿½s  
         for (DestinationInterface <Float> destinationConnectee : destinationsConnectees) {
            destinationConnectee.recevoir(informationCodee);
         }
         this.informationEmise = informationCodee; 
+	}
+	
+	/**
+	 * Getteur de l'information codee
+	 * @return informationCodee
+	 */
+	public Information <Float> getInformationCodee (){
+		return informationCodee;
 	}
 
 	public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package test;
+package sourcesTest;
 
 import static org.junit.Assert.*;
 import information.Information;

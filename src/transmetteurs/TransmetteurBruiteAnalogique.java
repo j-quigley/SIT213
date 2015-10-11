@@ -7,7 +7,7 @@ import java.util.*;
 import java.io.*;
 import  java.lang.*;
 
-public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
+public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 
 	private double snr = 1;
 	private double ps = 0;
@@ -16,7 +16,7 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 	
 	private Information <Float>  informationGeneree;
 	
-	public TransmetteurAnalogiqueBruite(float snr) {
+	public TransmetteurBruiteAnalogique(float snr) {
 		super();
 		informationRecue = new Information<Float>();
 		informationGeneree = new Information<Float>();

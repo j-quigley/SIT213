@@ -6,11 +6,25 @@ import information.InformationNonConforme;
 
 public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 
+	/**
+	 * aMin, aMax : amplitude minimum et maximum du signal
+	 * codage : type de codage du signal
+	 * nbEchantillons : nombre d'Žchantillons pour le codage
+	 * informationDecodee : tableau contenant l'information decodee
+	 */
 	private float aMin, aMax;
 	private String codage;
 	private int nbEchantillons;
 	private Information <Boolean> informationDecodee;
 	
+	/**
+	 * @param aMin
+	 * @param aMax
+	 * @param codage
+	 * @param nbEchantillons
+	 * 
+	 * Constructeur du RecepteurAnalogique qui recoit des informations de type float et renvoit des informations de type booleen
+	 */
 	public RecepteurAnalogique(float aMin, float aMax, String codage, int nbEchantillons) {
 		super();
 	    informationRecue = new Information<Float>();
@@ -29,6 +43,9 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 		}
 	}
 	
+	/**
+	 * Fonction de decodage RZ,NRZ ou NRZT
+	 */
 	public void decoder(){
 		Boolean valeurDecodee = false;
 		for(int i = 0; i<informationRecue.nbElements(); i++){
@@ -50,7 +67,14 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
         this.informationEmise = informationDecodee; 
 	}
 
-
+	/**
+	 * Getteur de l'information decodee
+	 * @return informationDecodee
+	 */
+	public Information <Boolean> getInformationDecodee (){
+		return informationDecodee;
+	}
+	
 	public static void main(String[] args) {
 		
 	}

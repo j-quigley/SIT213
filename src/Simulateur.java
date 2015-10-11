@@ -308,13 +308,7 @@
     		 throw new Exception("Erreur lors de l'envoi sur la cha”ne de transmission");
     	 }
       }
-   
-   	   	
-   	
-   /** La méthode qui calcule le taux d'erreur binaire en comparant les bits du message émis avec ceux du message reçu.
-   *
-   * @return  La valeur du Taux dErreur Binaire.
-   */   	   
+     	   
       public float  calculTauxErreurBinaire() {
       
       	Information<Boolean> informationEmise = source.getInformationEmise();

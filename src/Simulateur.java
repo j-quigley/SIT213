@@ -112,19 +112,10 @@
 			transmetteurLogique = new TransmetteurParfait();
 			destination = new DestinationFinale();  
 			
-			/////////////
 			//Connexion//
-			/////////////
 			source.connecter(transmetteurLogique);
 			transmetteurLogique.connecter(destination);
 			
-			/////////////
-			//Affichage//
-			/////////////
-			sondeSource = new SondeLogique("Sonde Source", 200);
-			sondeDestination = new SondeLogique("Sonde Destination", 200);
-			source.connecter(sondeSource);
-			transmetteurLogique.connecter(sondeDestination);
 			
 			//////////////////////////////////
 			//Simulation Analogique Parfaite//
@@ -134,40 +125,52 @@
 			recepteurAnalogique = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
 			destinationAnalogique = new DestinationFinale();
 			
+			//Connexion//
 			source.connecter(emetteurAnalogique);
 			emetteurAnalogique.connecter(transmetteurAnalogique);
 			transmetteurAnalogique.connecter(recepteurAnalogique);
 			recepteurAnalogique.connecter(destinationAnalogique);
 			
-
-			
-			//////////////
-			//Affichage//
-			//////////////
-
-			sondeSourceAnalogique = new SondeAnalogique("Sonde Source Analogique");
-			sondeDestinationAnalogique = new SondeAnalogique("Sonde Destination Analogique");
-			emetteurAnalogique.connecter(sondeSourceAnalogique);
-			transmetteurAnalogique.connecter(sondeDestinationAnalogique);
 			
 			/////////////////////////////////
 			//Simulation Analogique Bruite//
 			/////////////////////////////////
-			transmetteurAnalogiqueBruite = new TransmetteurAnalogiqueBruite(snr);
+			transmetteurAnalogiqueBruite = new TransmetteurBruiteAnalogique(snr);
 			destinationAnalogiqueBruite = new DestinationFinale();
 			recepteurAnalogiqueBruite = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
 			
-			sondeDestinationAnalogiqueBruite = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
-			sondeDestinationBruite = new SondeLogique("Sonde Destination Logique sans Bruit", 100);
 			
 			//Connexion//
 			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);	
 			transmetteurAnalogiqueBruite.connecter(recepteurAnalogiqueBruite);	
-			transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruite);
 			recepteurAnalogiqueBruite.connecter(destinationAnalogiqueBruite);
-			recepteurAnalogiqueBruite.connecter(sondeDestinationBruite);
 			
 			
+			/////////////
+			//Affichage//
+			/////////////
+			if (affichage == true){
+				//Message de base//
+				sondeSource = new SondeLogique("Sonde Source", 100);
+				sondeDestination = new SondeLogique("Sonde Destination", 100);
+				//Connextion//
+				source.connecter(sondeSource);
+				transmetteurLogique.connecter(sondeDestination);
+				
+				//Message analogique parfait//
+				sondeSourceAnalogique = new SondeAnalogique("Sonde Source Analogique");
+				sondeDestinationAnalogique = new SondeAnalogique("Sonde Destination Analogique");
+				//Connexion//
+				emetteurAnalogique.connecter(sondeSourceAnalogique);
+				transmetteurAnalogique.connecter(sondeDestinationAnalogique);	
+				
+				//Message analogique bruité//
+				sondeDestinationAnalogiqueBruite = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
+				sondeDestinationBruite = new SondeLogique("Sonde Destination Logique sans Bruit", 100);
+				//Connexion//
+				transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruite);
+				recepteurAnalogiqueBruite.connecter(sondeDestinationBruite);
+			}
 			
       }
    

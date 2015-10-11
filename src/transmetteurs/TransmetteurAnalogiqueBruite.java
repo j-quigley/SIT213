@@ -14,9 +14,12 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 	private double pb = 0;
 	private double sigma_b = 0;
 	
+	private Information <Float>  informationGeneree;
+	
 	public TransmetteurAnalogiqueBruite(float snr) {
 		super();
-	    informationRecue = new Information<Float>();
+		informationRecue = new Information<Float>();
+		informationGeneree = new Information<Float>();
 	    informationEmise = new Information<Float>();
 	    this.snr = snr;
 	}
@@ -37,26 +40,37 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 	public void recevoir(Information<Float> information)
 			throws InformationNonConforme {
 		for(int i = 0; i<information.nbElements(); i++){
-			informationRecue.add(information.iemeElement(i) + genererBruit());
+			informationRecue.add(information.iemeElement(i));
 			ps = ps + (information.iemeElement(i)*information.iemeElement(i)); 
 		}
-			ps /= information.nbElements();
-			pb = ps / Math.pow(10,snr/10);
-			sigma_b = Math.sqrt(pb);
-	}
-
-	@Override
-	public void emettre() throws InformationNonConforme {
-        for (DestinationInterface <Float> destinationConnectee : destinationsConnectees) {
-            destinationConnectee.recevoir(informationRecue);
-         }
-         this.informationEmise = informationRecue; 
 
 	}
 	
+	public void ajouterBruit() {
+		ps /= informationRecue.nbElements();
+		pb = ps / Math.pow(10,snr/10);
+		sigma_b = Math.sqrt(pb);
+		for(int i = 0; i<informationRecue.nbElements(); i++){		
+			informationGeneree.add(informationRecue.iemeElement(i)+genererBruit());
+		}
+	}
+	
+	@Override
+	public void emettre() throws InformationNonConforme {
+		ajouterBruit();
+        for (DestinationInterface <Float> destinationConnectee : destinationsConnectees) {
+            destinationConnectee.recevoir(informationGeneree);
+         }
+         this.informationEmise = informationGeneree; 
+
+	}
+
+	public void lInfo() {
+		System.out.println("nombre d'éléments reçus transmetteur bruité" +informationRecue.nbElements());
+	}
+	
 	public static void main(String[] args) {
-		TransmetteurAnalogiqueBruite tab = new TransmetteurAnalogiqueBruite(1);
-		
+
 	}
 
 }

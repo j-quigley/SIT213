@@ -28,6 +28,10 @@ public class TransmetteurParfait extends Transmetteur<Boolean, Boolean>{
         }
         this.informationEmise = informationRecue; 
 	}
+	
+	public void lInfo() {
+		System.out.println("nombre d'éléments reçus" +informationRecue.nbElements());
+	}
 
 	public static void main(String[] args) {
 		

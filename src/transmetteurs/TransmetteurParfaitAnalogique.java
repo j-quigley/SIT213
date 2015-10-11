@@ -28,6 +28,10 @@ public class TransmetteurParfaitAnalogique extends Transmetteur<Float, Float>{
         }
         this.informationEmise = informationRecue; 
 	}
+	
+	public void lInfo() {
+		System.out.println("nombre d'éléments reçus transmetteur parfait" +informationRecue.nbElements());
+	}
 
 	public static void main(String[] args) {
 		

@@ -118,6 +118,10 @@ public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 	public Information <Float> getInformationCodee (){
 		return informationCodee;
 	}
+	public void lInfo() {
+		System.out.println("nombre d'éléments reçus" +informationRecue.nbElements());
+	}
+
 
 	public static void main(String[] args) {
 	}

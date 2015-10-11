@@ -75,6 +75,10 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 		return informationDecodee;
 	}
 	
+	public void lInfo() {
+		System.out.println("nombre d'éléments reçus" +informationRecue.nbElements());
+	}
+
 	public static void main(String[] args) {
 		
 	}

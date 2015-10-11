@@ -75,8 +75,10 @@
       private			  EmetteurAnalogique emetteurAnalogique = null;
    /** le  composant Transmetteur analogique parfait logique de la chaine de transmission */
       private			  Transmetteur <Float, Float>  transmetteurAnalogique = null;
-   /** le  composant Recepteur de la chaine de transmission */
+      /** le  composant Recepteur de la chaine de transmission */
       private			  RecepteurAnalogique recepteurAnalogique = null;
+      /** le  composant RecepteurBruité de la chaine de transmission */
+      private			  RecepteurAnalogique recepteurAnalogiqueBruite = null;
    /** le  composant Transmetteur analogique parfait logique de la chaine de transmission */
       private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null;    
    /** le composant Sonde analogique de la Destination de la chaine de transmission avec bruit*/
@@ -147,15 +149,17 @@
 			transmetteurAnalogique.connecter(sondeDestinationAnalogique);
 			
 			/////////////////////////////////
-			//Simulation Analogique BruitŽe//
+			//Simulation Analogique Bruite//
 			/////////////////////////////////
 			transmetteurAnalogiqueBruite = new TransmetteurAnalogiqueBruite(snr);
 			destinationAnalogiqueBruit = new DestinationFinale();
+			recepteurAnalogiqueBruite = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
+			
 			//Connexion//
 			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);	
-			transmetteurAnalogiqueBruite.connecter(recepteurAnalogique);	
-			transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruit);
-			recepteurAnalogique.connecter(destinationAnalogiqueBruit);
+			transmetteurAnalogiqueBruite.connecter(recepteurAnalogiqueBruite);	
+			//transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruit);
+			recepteurAnalogiqueBruite.connecter(destinationAnalogiqueBruit);
 			//////////////
 			//Affichage//
 			//////////////
@@ -298,14 +302,14 @@
 	         source.emettre();
 	         transmetteurLogique.emettre();
 	         emetteurAnalogique.coder();
-	         emetteurAnalogique.emettre();
+	         emetteurAnalogique.emettre();       
 	         transmetteurAnalogique.emettre();
 	         transmetteurAnalogiqueBruite.emettre();
-	         recepteurAnalogique.decoder();
-	         recepteurAnalogiqueBruit.emettre();
+	         recepteurAnalogiqueBruite.decoder();
+	         recepteurAnalogiqueBruite.emettre();
     	 }
     	 catch (Exception e){
-    		 throw new Exception("Erreur lors de l'envoi sur la cha”ne de transmission");
+    		 throw new Exception("Erreur lors de l'envoi sur la chaine de transmission");
     	 }
       }
      	   

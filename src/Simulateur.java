@@ -47,8 +47,8 @@
       private		   float aMin = -1.0f;
    /** indique au simulateur la tension du niveau 1 **/
       private		   float aMax = 1.0f;
-      /** indique au simulateur la variance du bruit **/
-      private		   float varBruit = 1.0f;
+      /** indique au simulateur le rapport signal ˆ bruit du transmetteur bruitŽ **/
+      private		   float snr = 0.5f;
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
@@ -56,6 +56,10 @@
       private			  Transmetteur <Boolean, Boolean>  transmetteurLogique = null;
    /** le  composant Destination de la chaine de transmission */
       private			  Destination <Boolean>  destination = null;
+      /** le  composant Destination de la chaine de transmission analogique */
+      private			  Destination <Boolean>  destinationAnalogique = null;
+      /** le  composant Destination de la chaine de transmission analogique avec bruit */
+      private			  Destination <Boolean>  destinationAnalogiqueBruit = null;
       
    /** le composant Sonde de la Source de la chaine de transmission */
       private SondeLogique sondeSource = null;
@@ -77,7 +81,11 @@
       private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null;    
    /** le composant Sonde analogique de la Destination de la chaine de transmission avec bruit*/
       private SondeAnalogique sondeDestinationAnalogiqueBruit = null;
-   
+   /** le composant Sonde de la Destination de la chaine de transmission avec bruit */
+      private SondeLogique sondeDestinationBruit = null;
+   /** le  composant Recepteur de la chaine de transmission avec bruit */
+      private			  RecepteurAnalogique recepteurAnalogiqueBruit = null;
+      
    /** Le constructeur de Simulateur construit une chaîne de transmission composée d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la méthode analyseArguments]...  
    * <br> Les différents composants de la chaîne de transmission (Source, Transmetteur(s), Destination, Sonde(s) de visualisation) sont créés et connectés.
    * @param args le tableau des différents arguments.
@@ -99,9 +107,20 @@
     	    }
 			transmetteurLogique = new TransmetteurParfait();
 			destination = new DestinationFinale();  
+			
+			/////////////
 			//Connexion//
+			/////////////
 			source.connecter(transmetteurLogique);
 			transmetteurLogique.connecter(destination);
+			
+			/////////////
+			//Affichage//
+			/////////////
+			sondeSource = new SondeLogique("Sonde Source", 200);
+			sondeDestination = new SondeLogique("Sonde Destination", 200);
+			source.connecter(sondeSource);
+			transmetteurLogique.connecter(sondeDestination);
 			
 			//////////////////////////////////
 			//Simulation Analogique Parfaite//
@@ -109,34 +128,40 @@
 			emetteurAnalogique = new EmetteurAnalogique(aMin, aMax, codage, nbEchantillons);
 			transmetteurAnalogique = new TransmetteurParfaitAnalogique();
 			recepteurAnalogique = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
+			destinationAnalogique = new DestinationFinale();
 			
 			source.connecter(emetteurAnalogique);
 			emetteurAnalogique.connecter(transmetteurAnalogique);
 			transmetteurAnalogique.connecter(recepteurAnalogique);
-			recepteurAnalogique.connecter(destination);
+			recepteurAnalogique.connecter(destinationAnalogique);
 			
-			/////////////////////////////////
-			//Simulation Analogique BruitŽe//
-			/////////////////////////////////
-			//transmetteurAnalogiqueBruite = new TransmetteurAnalogiqueBruite(varBruit);
-			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);
-			transmetteurAnalogiqueBruite.connecter(recepteurAnalogique);
-			
+
 			
 			//////////////
 			//Affichage//
 			//////////////
-			sondeSource = new SondeLogique("Sonde Source", 200);
-			sondeDestination = new SondeLogique("Sonde Destination", 200);
+
 			sondeSourceAnalogique = new SondeAnalogique("Sonde Source Analogique");
 			sondeDestinationAnalogique = new SondeAnalogique("Sonde Destination Analogique");
-			sondeDestinationAnalogiqueBruit = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
-			//Connexion//
-			source.connecter(sondeSource);
-			transmetteurLogique.connecter(sondeDestination);
 			emetteurAnalogique.connecter(sondeSourceAnalogique);
-			transmetteurAnalogique.connecter(sondeDestinationAnalogique);	
+			transmetteurAnalogique.connecter(sondeDestinationAnalogique);
+			
+			/////////////////////////////////
+			//Simulation Analogique BruitŽe//
+			/////////////////////////////////
+			transmetteurAnalogiqueBruite = new TransmetteurAnalogiqueBruite(snr);
+			destinationAnalogiqueBruit = new DestinationFinale();
+			//Connexion//
+			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);	
+			transmetteurAnalogiqueBruite.connecter(recepteurAnalogique);	
 			transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruit);
+			recepteurAnalogique.connecter(destinationAnalogiqueBruit);
+			//////////////
+			//Affichage//
+			//////////////
+			sondeDestinationAnalogiqueBruit = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
+			
+			
       }
    
    
@@ -245,14 +270,14 @@
             		throw new ArgumentsException("Valeur de parametre -amp invalide : " + args[i]);
             	}
             }             
-            else if (args[i].matches("-var")){
+            else if (args[i].matches("-snr")){
             	i++; 
-            	if(args[i].matches("[0-9].[1-9]+")){
-            		varBruit = Float.parseFloat(args[i]);
+            	if(args[i].matches("[0].[1-9]+")){
+            		snr = Float.parseFloat(args[i]);
             		i++;
             	}
             	else{
-               		throw new ArgumentsException("Valeur de parametre -var invalide : " + args[i]);	
+               		throw new ArgumentsException("Valeur de parametre -snr invalide : " + args[i]);	
             	}
             }
             else throw new ArgumentsException("Option invalide :"+ args[i]);
@@ -277,10 +302,10 @@
 	         transmetteurAnalogique.emettre();
 	         transmetteurAnalogiqueBruite.emettre();
 	         recepteurAnalogique.decoder();
-	         recepteurAnalogique.emettre();
+	         recepteurAnalogiqueBruit.emettre();
     	 }
     	 catch (Exception e){
-    		 throw new Exception("Erreur lors de l'envoie sur la cha”ne de transmission");
+    		 throw new Exception("Erreur lors de l'envoi sur la cha”ne de transmission");
     	 }
       }
    

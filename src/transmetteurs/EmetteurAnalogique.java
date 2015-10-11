@@ -101,7 +101,7 @@ public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 	}
 
 	public void emettre() throws InformationNonConforme {
-		// émission vers les composants connectés  
+		// Emission vers les composants connectés  
         for (DestinationInterface <Float> destinationConnectee : destinationsConnectees) {
            destinationConnectee.recevoir(informationCodee);
         }

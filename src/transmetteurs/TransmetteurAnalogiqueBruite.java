@@ -9,13 +9,16 @@ import  java.lang.*;
 
 public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 
-	private float variance = 1;
+	private double snr = 1;
+	private double ps = 0;
+	private double pb = 0;
+	private double sigma_b = 0;
 	
-	public TransmetteurAnalogiqueBruite(float variance) {
+	public TransmetteurAnalogiqueBruite(float snr) {
 		super();
 	    informationRecue = new Information<Float>();
 	    informationEmise = new Information<Float>();
-	    this.variance = variance;
+	    this.snr = snr;
 	}
 	
 	public float genererBruit (){
@@ -24,7 +27,8 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 		a1 /= 1000;
 		double a2 = rand.nextInt(1000);
 		a2 /= 1000;
-		double b = Math.sqrt(-2*(Math.log(1-a1)))*Math.cos(2*Math.PI*a2);
+		double b = sigma_b*(Math.sqrt(-2*(Math.log(1-a1)))*Math.cos(2*Math.PI*a2));
+		System.out.println(b);
 		return (float)b;
 		
 	}
@@ -34,8 +38,11 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 			throws InformationNonConforme {
 		for(int i = 0; i<information.nbElements(); i++){
 			informationRecue.add(information.iemeElement(i) + genererBruit());
+			ps = ps + (information.iemeElement(i)*information.iemeElement(i)); 
 		}
-
+			ps /= information.nbElements();
+			pb = ps / Math.pow(10,snr/10);
+			sigma_b = Math.sqrt(pb);
 	}
 
 	@Override
@@ -48,6 +55,8 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 	}
 	
 	public static void main(String[] args) {
+		TransmetteurAnalogiqueBruite tab = new TransmetteurAnalogiqueBruite(1);
+		
 	}
 
 }

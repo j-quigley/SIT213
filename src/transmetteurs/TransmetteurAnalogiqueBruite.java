@@ -31,7 +31,6 @@ public class TransmetteurAnalogiqueBruite extends Transmetteur<Float, Float> {
 		double a2 = rand.nextInt(1000);
 		a2 /= 1000;
 		double b = sigma_b*(Math.sqrt(-2*(Math.log(1-a1)))*Math.cos(2*Math.PI*a2));
-		System.out.println(b);
 		return (float)b;
 		
 	}

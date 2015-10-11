@@ -40,15 +40,15 @@
    /** la chaîne de caractères correspondant à m dans l'argument -mess m */
       private          String messageString = "100";
    /** indique au simulateur le type de codage utilisŽ **/
-      private		   String codage = "NRZ";
+      private		   String codage = "RZ";
    /** indique au simulateur le nombre d'Žchantillon ˆ utiliser **/
       private		   int nbEchantillons = 30;
    /** indique au simulateur la tension du niveau 0 **/
-      private		   float aMin = -1.0f;
+      private		   float aMin = 0.0f;
    /** indique au simulateur la tension du niveau 1 **/
       private		   float aMax = 1.0f;
       /** indique au simulateur le rapport signal ˆ bruit du transmetteur bruitŽ **/
-      private		   float snr = 0.5f;
+      private		   float snr = 1f;
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
@@ -59,34 +59,36 @@
       /** le  composant Destination de la chaine de transmission analogique */
       private			  Destination <Boolean>  destinationAnalogique = null;
       /** le  composant Destination de la chaine de transmission analogique avec bruit */
-      private			  Destination <Boolean>  destinationAnalogiqueBruit = null;
+      private			  Destination <Boolean>  destinationAnalogiqueBruite = null;
       
    /** le composant Sonde de la Source de la chaine de transmission */
       private SondeLogique sondeSource = null;
    /** le composant Sonde de la Destination de la chaine de transmission */
       private SondeLogique sondeDestination = null;
+   /** le composant Sonde bruitŽ de la Destination de la chaine de transmission */
+      private SondeLogique sondeDestinationBruite = null;   
       
    /** le composant Sonde analogique de la Source de la chaine de transmission */
       private SondeAnalogique sondeSourceAnalogique = null;
    /** le composant Sonde analogique de la Destination de la chaine de transmission */
       private SondeAnalogique sondeDestinationAnalogique = null;
-
-   /** le  composant EmetteurAnalogique de la chaine de transmission */
-      private			  EmetteurAnalogique emetteurAnalogique = null;
-   /** le  composant Transmetteur analogique parfait logique de la chaine de transmission */
-      private			  Transmetteur <Float, Float>  transmetteurAnalogique = null;
-      /** le  composant Recepteur de la chaine de transmission */
-      private			  RecepteurAnalogique recepteurAnalogique = null;
-      /** le  composant RecepteurBruité de la chaine de transmission */
-      private			  RecepteurAnalogique recepteurAnalogiqueBruite = null;
-   /** le  composant Transmetteur analogique parfait logique de la chaine de transmission */
-      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null;    
    /** le composant Sonde analogique de la Destination de la chaine de transmission avec bruit*/
-      private SondeAnalogique sondeDestinationAnalogiqueBruit = null;
-   /** le composant Sonde de la Destination de la chaine de transmission avec bruit */
-      private SondeLogique sondeDestinationBruit = null;
-   /** le  composant Recepteur de la chaine de transmission avec bruit */
-      private			  RecepteurAnalogique recepteurAnalogiqueBruit = null;
+      private SondeAnalogique sondeDestinationAnalogiqueBruite = null;
+
+
+   /** le  composant Emetteur analogique de la chaine de transmission */
+      private			  EmetteurAnalogique emetteurAnalogique = null;
+      
+   /** le  composant Transmetteur analogique parfait de la chaine de transmission */
+      private			  Transmetteur <Float, Float>  transmetteurAnalogique = null;
+   /** le  composant Recepteur analogique de la chaine de transmission */
+      private			  RecepteurAnalogique recepteurAnalogique = null;
+      
+   /** le  composant Transmetteur analogique bruitŽ de la chaine de transmission */
+      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null;       
+   /** le  composant Recepteur analogique bruitŽ de la chaine de transmission */
+      private			  RecepteurAnalogique recepteurAnalogiqueBruite = null;
+ 
       
    /** Le constructeur de Simulateur construit une chaîne de transmission composée d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la méthode analyseArguments]...  
    * <br> Les différents composants de la chaîne de transmission (Source, Transmetteur(s), Destination, Sonde(s) de visualisation) sont créés et connectés.
@@ -152,18 +154,19 @@
 			//Simulation Analogique Bruite//
 			/////////////////////////////////
 			transmetteurAnalogiqueBruite = new TransmetteurAnalogiqueBruite(snr);
-			destinationAnalogiqueBruit = new DestinationFinale();
+			destinationAnalogiqueBruite = new DestinationFinale();
 			recepteurAnalogiqueBruite = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
+			
+			sondeDestinationAnalogiqueBruite = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
+			sondeDestinationBruite = new SondeLogique("Sonde Destination Logique sans Bruit", 100);
 			
 			//Connexion//
 			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);	
 			transmetteurAnalogiqueBruite.connecter(recepteurAnalogiqueBruite);	
-			//transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruit);
-			recepteurAnalogiqueBruite.connecter(destinationAnalogiqueBruit);
-			//////////////
-			//Affichage//
-			//////////////
-			sondeDestinationAnalogiqueBruit = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
+			transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruite);
+			recepteurAnalogiqueBruite.connecter(destinationAnalogiqueBruite);
+			recepteurAnalogiqueBruite.connecter(sondeDestinationBruite);
+			
 			
 			
       }
@@ -260,25 +263,24 @@
             }
             else if (args[i].matches("-ampl")){
             	i++; 
-            	if(args[i].matches("[0-9]+(\\.[0-9]+)?")){
+            	if(args[i].matches("-?[0-9]+(\\.[0-9]+)?")){
             		aMin = Float.parseFloat(args[i]);
             		i++; 
-            		if((args[i].matches("[0-9]+(\\.[0-9]+)?"))|(aMin<Float.parseFloat(args[i]))){
+            		if((args[i].matches("-?[0-9]+(\\.[0-9]+)?"))&&(aMin<Float.parseFloat(args[i]))){
             			aMax = Float.parseFloat(args[i]);
             		}
             		else{
-                		throw new ArgumentsException("Valeur de parametre -amp invalide : " + args[i]);
+                		throw new ArgumentsException("Valeur de parametre -ampl invalide : " + args[i]);
                 	}
             	}
             	else{
-            		throw new ArgumentsException("Valeur de parametre -amp invalide : " + args[i]);
+            		throw new ArgumentsException("Valeur de parametre -ampl invalide : " + args[i]);
             	}
             }             
             else if (args[i].matches("-snr")){
             	i++; 
-            	if(args[i].matches("[0].[1-9]+")){
+            	if(args[i].matches("[0]\\.[0-9]*[0-9]")){
             		snr = Float.parseFloat(args[i]);
-            		i++;
             	}
             	else{
                		throw new ArgumentsException("Valeur de parametre -snr invalide : " + args[i]);	
@@ -316,7 +318,7 @@
       public float  calculTauxErreurBinaire() {
       
       	Information<Boolean> informationEmise = source.getInformationEmise();
-      	Information<Boolean> informationRecue = destination.getInformationRecue();
+      	Information<Boolean> informationRecue = destinationAnalogiqueBruite.getInformationRecue();
       	
       	float nbErreur = 0;
       	

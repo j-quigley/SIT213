@@ -48,12 +48,23 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 	 */
 	public void decoder(){
 		Boolean valeurDecodee = false;
+		int compteur = 0;
+		float sommes = 0;
+		float moyenne;
 		for(int i = 0; i<informationRecue.nbElements(); i++){
-			if(informationRecue.iemeElement(i) == aMax){
-				valeurDecodee = true;
+			if(((i+1)%nbEchantillons > nbEchantillons/3)&&((i+1)%nbEchantillons <= 2*nbEchantillons/3)){
+				compteur++;
+				sommes += informationRecue.iemeElement(i);
 			}
 			if((i+1)%nbEchantillons == 0){
+				moyenne = sommes/compteur;
+				if((moyenne > (aMax-(aMax/5)))&&(moyenne < (aMax+(aMax/5)))){
+					valeurDecodee = true;
+				}
 				informationDecodee.add(valeurDecodee);
+				valeurDecodee = false;
+				compteur = 0;
+				sommes = 0;
 			}
 		}
 	}

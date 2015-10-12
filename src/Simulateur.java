@@ -28,7 +28,7 @@
    public class Simulateur {
       	
    /** indique si le Simulateur utilise des sondes d'affichage */
-      private          boolean affichage = false;
+      private          boolean affichage = true	;
    /** indique si le Simulateur utilise un message généré de manière aléatoire */
       private          boolean messageAleatoire = false;
    /** indique si le Simulateur utilise un germe pour initialiser les générateurs aléatoires */
@@ -282,7 +282,7 @@
             }             
             else if (args[i].matches("-snr")){
             	i++; 
-            	if(args[i].matches("[0]\\.[0-9]*[0-9]")){
+            	if(args[i].matches("-?[1-9][0-9]*")){
             		snr = Float.parseFloat(args[i]);
             	}
             	else{

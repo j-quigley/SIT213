@@ -36,6 +36,7 @@ public class RecepteurAnalogiqueTest {
 
 	@Before
 	public void setUp() throws Exception {
+		
 	}
 
 	@Test

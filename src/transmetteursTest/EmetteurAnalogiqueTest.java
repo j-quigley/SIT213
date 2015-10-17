@@ -30,102 +30,82 @@ import java.io.PrintWriter;
 public class EmetteurAnalogiqueTest {
 
 	private Source <Boolean> source;
+	private EmetteurAnalogique eaRZ;
+	private EmetteurAnalogique eaNRZ;
+	private EmetteurAnalogique eaNRZT;
+	private Information<Float> infRZ;
+	private Information<Float> infNRZ;
+	private Information<Float> infNRZT;
+	private float aMin;
+	private float aMax;
 	
 	@Before
 	public void setUp() throws Exception {
+		aMin = 1.0f;
+		aMax = 5.0f;
 		
+		source = new SourceFixe("10");
 		
+		eaRZ = new EmetteurAnalogique(aMin, aMax, "RZ", 30);
+		eaNRZ = new EmetteurAnalogique(aMin, aMax, "NRZ", 30);
+		eaNRZT = new EmetteurAnalogique(aMin, aMax, "NRZT", 30);
+		
+		infRZ = new Information<Float>();
+		infNRZ = new Information<Float>();
+		infNRZT = new Information<Float>();
+		
+		source.connecter(eaRZ);
+		source.connecter(eaNRZ);
+		source.connecter(eaNRZT);
+		source.emettre();
+		
+		eaRZ.coder();
+		eaNRZ.coder();
+		eaNRZT.coder();
+		
+		//Initialisation de infRZ
+		for (int i =0; i<60; i++){
+			if ((i>=10)&&(i<20)){
+				infRZ.add(aMax);
+			}
+			else {
+				infRZ.add(0.0f);
+			}
+		}
+
+		//Initialisation de infNRZ
+		for (int i =0; i<60; i++){
+			if (i<30){
+				infNRZ.add(aMax);
+			}
+			else{
+				infNRZ.add(aMin);
+			}
+		}
+		
+		//Initialisation de infNRZT
+		for(int i = 0; i<60; i++){
+			if(i<10){
+				infNRZT.add(aMin+((aMax-aMin)/10)*i);
+			}
+			else if((i>=10)&&(i<20)){
+				infNRZT.add(aMax);
+			}
+			else if((i>=20)&&(i<30)){
+				infNRZT.add(aMin+((aMax-aMin)/10)*(29-i));
+			}
+			else{
+				infNRZT.add(aMin);
+			}	
+		}
+		
+
 	}
 
 	@Test
 	public void testCoder() {
-		
-		float aMax = 5.0f;
-		float aMin = 1.0f;
-		source = new SourceFixe("10");
-		EmetteurAnalogique EA_NRZ = new EmetteurAnalogique(aMin,aMax,"NRZ",30);
-		source.connecter(EA_NRZ);
-		
-	  	 try{
-	         source.emettre();
-  	 }
-  	 catch (InformationNonConforme e){
-  		
-  	 }
-	  	EA_NRZ.coder();
-		Information <Float> inf_NRZ = new Information <Float>();
-		
-		for (int i =0; i<30; i++){
-			inf_NRZ.add(aMax);
-		}
-		for (int i =0; i<30; i++){
-			inf_NRZ.add(aMin);
-		}
-		
-		assertTrue(inf_NRZ.equals(EA_NRZ.getInformationCodee()));
-		
-		
-		EmetteurAnalogique EA_RZ = new EmetteurAnalogique(1,5,"RZ",30);
-		source.connecter(EA_RZ);
-		
-	  	 try{
-	         source.emettre();
-  	 }
-  	 catch (InformationNonConforme e){
-  		
-  	 }
-		EA_RZ.coder();
-		Information <Float> inf_RZ = new Information <Float>();
-		
-		for (int i =0; i<10; i++){
-			inf_RZ.add(1.0f);
-		}
-		for (int i =10; i<20; i++){
-			inf_RZ.add(5.0f);
-		}
-		for (int i =20; i<30; i++){
-			inf_RZ.add(1.0f);
-		}
-		for (int i =0; i<30; i++){
-			inf_RZ.add(1.0f);
-		}
-		
-		assertTrue(inf_RZ.equals(EA_RZ.getInformationCodee()));
-		
-		EmetteurAnalogique EA_NRZT = new EmetteurAnalogique(1,5,"NRZT",30);
-		source.connecter(EA_NRZT);
-		
-	  	 try{
-	         source.emettre();
-  	 }
-  	 catch (InformationNonConforme e){
-  		
-  	 }
-		EA_NRZT.coder();
-		Information <Float> inf_NRZT = new Information <Float>();
-		
-		
-			for(int j = 0; j<10; j++){
-				inf_NRZT.add(aMin+((aMax-aMin)/10)*j);
-			}
-			for(int j = 0; j<10; j++){
-				inf_NRZT.add(aMax);
-			}
-			for(int j = 0; j<10; j++){
-				inf_NRZT.add(aMin+((aMax-aMin)/10)*(9-j));
-			}
-			
-			for(int j = 0; j<30; j++){
-				inf_NRZT.add(aMin);
-			}
-			
-
-		
-		assertTrue(inf_NRZT.equals(EA_NRZT.getInformationCodee()));
-	
+		assertTrue(infRZ.equals(eaRZ.getInformationCodee()));
+		assertTrue(infNRZ.equals(eaNRZ.getInformationCodee()));
+		assertTrue(infNRZT.equals(eaNRZT.getInformationCodee()));
 	}
-
-
-
-
 }

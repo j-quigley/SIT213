@@ -71,7 +71,8 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 
 	@Override
 	public void emettre() throws InformationNonConforme {
-		// émission vers les composants connectés  
+		decoder();
+		// Žmission vers les composants connectŽs  
         for (DestinationInterface <Boolean> destinationConnectee : destinationsConnectees) {
            destinationConnectee.recevoir(informationDecodee);
         }

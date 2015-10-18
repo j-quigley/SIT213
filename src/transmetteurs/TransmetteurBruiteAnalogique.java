@@ -65,7 +65,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 	}
 
 	public void lInfo() {
-		System.out.println("nombre d'éléments reçus transmetteur bruité" +informationRecue.nbElements());
+		System.out.println(informationGeneree.toString());
 	}
 	
 	public Information<Float> getInformationGeneree(){

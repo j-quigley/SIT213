@@ -16,11 +16,6 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	
 	private Information <Float>  informationGeneree;
 	private Information <Float>  informationDeDecalage;
-	private Information <Float>  informationDecalee1;
-	private Information <Float>  informationDecalee2;
-	private Information <Float>  informationDecalee3;
-	private Information <Float>  informationDecalee4;
-	private Information <Float>  informationDecalee5;
 	private Information <Float>  informationATransmettre;
 	
 	private Information <Float> [] informationDecalee= new Information  [5];
@@ -34,11 +29,6 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 		informationRecue = new Information<Float>();
 		informationGeneree = new Information<Float>();
 	    informationEmise = new Information<Float>();
-	    informationDecalee1 = new Information<Float>();
-	    informationDecalee2 = new Information<Float>();
-	    informationDecalee3 = new Information<Float>();
-	    informationDecalee4 = new Information<Float>();
-	    informationDecalee5 = new Information<Float>();
 	    informationATransmettre = new Information<Float>();
 	    this.snr = snr;
 	    this.ar = ar;
@@ -62,23 +52,17 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 		Information <Float>  info = new Information<Float>();
 		
 		for(int i = 0; i<informationRecue.nbElements(); i++){
-			if (i<=dt){
+			if (i<dt){
 				info.add(0.0f);
 			}
 			else {	
-				info.add((ar*informationGeneree.iemeElement(i))); 
+				info.add((ar*informationRecue.iemeElement(i))); 
 			}
 		}
 		return info;
 	}
 	
-	public Information <Float> additionnerSignaux (Information <Float>  informationDecalee){
 
-		for(int i = 0; i<informationRecue.nbElements(); i++){
-			informationGeneree.add((informationDeDecalage.iemeElement(i)+informationDecalee.iemeElement(i))); 
-		}
-		return informationDecalee;
-	}
 	
 	@Override
 	public void recevoir(Information<Float> information)
@@ -127,7 +111,7 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	}
 
 	public void lInfo() {
-		System.out.println("nombre d'ÈlÈments reçus transmetteur bruité" +informationRecue.nbElements());
+		System.out.println(informationATransmettre.toString());
 	}
 	
 	public static void main(String[] args) {

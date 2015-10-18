@@ -104,7 +104,8 @@ public class EmetteurAnalogique extends Transmetteur<Boolean, Float>{
 
 	@Override
 	public void emettre() throws InformationNonConforme {
-		// ï¿½mission vers les composants connectï¿½s  
+		coder();
+		// Žmission vers les composants connectŽs  
         for (DestinationInterface <Float> destinationConnectee : destinationsConnectees) {
            destinationConnectee.recevoir(informationCodee);
         }

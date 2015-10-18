@@ -324,7 +324,7 @@
                 	if(args[i].matches("[1-9][0-9]*")){
                 		dt[Integer.parseInt(args[i-1])-1] = Integer.parseInt(args[i]);
                 		i++;
-                		if(args[i].matches("0\\.[0-9]*[1-9]")){
+                		if(args[i].matches("1|(0\\.[0-9]*[1-9])")){
                 			ar[Integer.parseInt(args[i-2])-1] = Float.parseFloat(args[i]);
                 		}
                 		else{
@@ -356,19 +356,18 @@
       public void execute() throws Exception {      
     	 try{
 	         source.emettre();
-	         transmetteurLogique.emettre();
-	         emetteurAnalogique.coder();
 	         emetteurAnalogique.emettre();
 	         
+	         transmetteurLogique.emettre();
 	         transmetteurAnalogique.emettre();
 	         transmetteurAnalogiqueBruite.emettre();
 	         transmetteurAnalogiqueBruiteReel.emettre();
 	         
-	         recepteurAnalogiqueBruite.decoder();
+	         recepteurAnalogique.emettre();
 	         recepteurAnalogiqueBruite.emettre();
 	         recepteurAnalogiqueBruiteReel.emettre();
 	         
-	         //transmetteurAnalogiqueBruite.lInfo();
+	        
     	 }
     	 catch (Exception e){
     		 throw new Exception("Erreur lors de l'envoi sur la chaine de transmission");
@@ -378,7 +377,7 @@
       public float  calculTauxErreurBinaire() {
       
       	Information<Boolean> informationEmise = source.getInformationEmise();
-      	Information<Boolean> informationRecue = destinationAnalogiqueBruite.getInformationRecue();
+      	Information<Boolean> informationRecue = destinationAnalogiqueBruiteReel.getInformationRecue();
       	
       	float nbErreur = 0;
       	

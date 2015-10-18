@@ -45,11 +45,7 @@ public class TransmetteurBruiteAnalogiqueTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-<<<<<<< HEAD
-		assertEquals("L'information n'a pas ŽtŽ bien gŽnŽrŽe", transmetteur.getInformationGeneree() , transmetteur.getInformationEmise());
-=======
-		assertEquals("L'information n'a pas �t� bien g�n�r�e", transmetteur.getInformationGeneree() , transmetteur.getInformationEmise());
->>>>>>> branch 'master' of https://github.com/j-quigley/SIT213
+		assertEquals("L'information n'a pas été bien générée", transmetteur.getInformationGeneree() , transmetteur.getInformationEmise());
 	}
 
 	@Test

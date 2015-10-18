@@ -47,6 +47,18 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 		
 	}
 	
+	public void setSigma(Double sigma){
+		sigma_b = sigma;
+	}
+	
+	public Information<Float> getInformationGeneree(){
+		return informationGeneree;
+	}
+	
+	public Information<Float> getInformationDeDecalage(){
+		return informationDeDecalage;
+	}
+	
 	public Information <Float> decalerSignal (float ar, int dt){
 
 		Information <Float>  info = new Information<Float>();

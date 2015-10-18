@@ -21,7 +21,7 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	private Information <Float>  informationDecalee3;
 	private Information <Float>  informationDecalee4;
 	private Information <Float>  informationDecalee5;
-	private Information <Float> informationATransmettre;
+	private Information <Float>  informationATransmettre;
 	
 	private Information <Float> [] informationDecalee= new Information  [5];
 	
@@ -62,7 +62,7 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 		Information <Float>  info = new Information<Float>();
 		
 		for(int i = 0; i<informationRecue.nbElements(); i++){
-			if (i>=dt){
+			if (i<=dt){
 				info.add(0.0f);
 			}
 			else {	
@@ -127,11 +127,11 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	}
 
 	public void lInfo() {
-		System.out.println("nombre d'ÈlÈments reÁus transmetteur bruitÈ" +informationRecue.nbElements());
+		System.out.println("nombre d'ÈlÈments reçus transmetteur bruité" +informationRecue.nbElements());
 	}
 	
 	public static void main(String[] args) {
-
+		
 	}
 
 }

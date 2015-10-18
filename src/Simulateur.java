@@ -39,15 +39,15 @@
       private          int nbBitsMess = 100; 
    /** la chaîne de caractères correspondant à m dans l'argument -mess m */
       private          String messageString = "100";
-   /** indique au simulateur le type de codage utilisŽ **/
+   /** indique au simulateur le type de codage utilisé **/
       private		   String codage = "RZ";
-   /** indique au simulateur le nombre d'Žchantillon ˆ utiliser **/
+   /** indique au simulateur le nombre d'échantillon à utiliser **/
       private		   int nbEchantillons = 30;
    /** indique au simulateur la tension du niveau 0 **/
       private		   float aMin = 0.0f;
    /** indique au simulateur la tension du niveau 1 **/
       private		   float aMax = 1.0f;
-      /** indique au simulateur le rapport signal ˆ bruit du transmetteur bruitŽ **/
+      /** indique au simulateur le rapport signal ˆ bruit du transmetteur bruité **/
       private		   float snr = 1f;
       /** indique au simulateur les trajectoires de décalage. decalage[x] = true si on genere un signal decale x  **/
       private		   Boolean []  decalage = new Boolean[] {false,false,false,false,false};
@@ -73,7 +73,7 @@
       private SondeLogique sondeSource = null;
    /** le composant Sonde de la Destination de la chaine de transmission */
       private SondeLogique sondeDestination = null;
-   /** le composant Sonde bruitŽ de la Destination de la chaine de transmission */
+   /** le composant Sonde bruité de la Destination de la chaine de transmission */
       private SondeLogique sondeDestinationBruite = null;   
       
    /** le composant Sonde analogique de la Source de la chaine de transmission */
@@ -94,13 +94,13 @@
    /** le  composant Recepteur analogique de la chaine de transmission */
       private			  RecepteurAnalogique recepteurAnalogique = null;
       
-      /** le  composant Transmetteur analogique bruitŽ de la chaine de transmission */
+      /** le  composant Transmetteur analogique bruité de la chaine de transmission */
       private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null; 
       /** le  composant Transmetteur analogique bruité réel de la chaine de transmission */
       private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruiteReel = null; 
-      /** le  composant Recepteur analogique bruitŽ de la chaine de transmission */
+      /** le  composant Recepteur analogique bruité de la chaine de transmission */
       private			  RecepteurAnalogique recepteurAnalogiqueBruite = null;
-      /** le  composant Recepteur analogique bruitŽ de la chaine de transmission */
+      /** le  composant Recepteur analogique bruité de la chaine de transmission */
       private			  RecepteurAnalogique recepteurAnalogiqueBruiteReel = null;
  
       
@@ -309,7 +309,7 @@
             }             
             else if (args[i].matches("-snr")){
             	i++; 
-            	if(args[i].matches("-?[1-9][0-9]*")){
+            	if(args[i].matches("-?[0-9]*")){
             		snr = Float.parseFloat(args[i]);
             	}
             	else{
@@ -368,7 +368,7 @@
 	         recepteurAnalogiqueBruite.emettre();
 	         recepteurAnalogiqueBruiteReel.emettre();
 	         
-	         transmetteurAnalogiqueBruite.lInfo();
+	         //transmetteurAnalogiqueBruite.lInfo();
     	 }
     	 catch (Exception e){
     		 throw new Exception("Erreur lors de l'envoi sur la chaine de transmission");

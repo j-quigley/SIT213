@@ -68,7 +68,40 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 		System.out.println("nombre d'ÈlÈments reÁus transmetteur bruitÈ" +informationRecue.nbElements());
 	}
 	
+	public Information<Float> getInformationGeneree(){
+		return informationGeneree;
+	}
+	
+	public void setSigma(Double sigma){
+		sigma_b = sigma;
+	}
+	
 	public static void main(String[] args) {
+		//Génération d'un bruit pour montrer son caractère gaussien
+		Information<Float> infGeneree = new Information<Float>();
+		TransmetteurBruiteAnalogique transmetteur = new TransmetteurBruiteAnalogique(0.0f);
+		transmetteur.setSigma(2.0);
+		for(int i = 0; i<1000; i++){
+			infGeneree.add(transmetteur.genererBruit());
+		}
+		PrintStream l_out = null;
+		try {
+			l_out = new PrintStream(new FileOutputStream("histogramme.csv"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		try { 
+			for(int i = 0; i<1000; i++){
+				l_out.print(infGeneree.iemeElement(i));
+				l_out.print(";");
+			}
+			//on ferme le fichier : 
+			l_out.flush(); 
+			l_out.close(); 
+			l_out=null; 
+		} 
+		catch(Exception e){System.out.println(e.toString()); } 
 
 	}
 

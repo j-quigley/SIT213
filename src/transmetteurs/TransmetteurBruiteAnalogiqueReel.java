@@ -100,7 +100,12 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	
 	public void ajouterDecalage() {
 		for(int i=0;i<5;i++){
-			informationDecalee[i] = decalerSignal(ar[i],dt[i]);		
+			if (decalage[i]) {
+				informationDecalee[i] = decalerSignal(ar[i],dt[i]);
+			}
+			else {
+				informationDecalee[i] = decalerSignal(0,0);
+			}
 		}
 		for(int i = 0; i<informationRecue.nbElements(); i++){
 			informationATransmettre.add(informationGeneree.iemeElement(i)+informationDecalee[0].iemeElement(i)

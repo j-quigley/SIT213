@@ -314,6 +314,9 @@
             
             else if (args[i].matches("-ti")){
             	i++; 
+            	for(int j=0;j<5;j++){
+            		decalage[j] = false;
+            	}
             	if(args[i].matches("[1]")){
             		decalage[0] = true;
             		i++;

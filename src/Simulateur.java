@@ -50,7 +50,7 @@
       /** indique au simulateur le rapport signal ˆ bruit du transmetteur bruitŽ **/
       private		   float snr = 1f;
       /** indique au simulateur les trajectoires de décalage. decalage[x] = true si on genere un signal decale x  **/
-      private		   Boolean []  decalage = new Boolean [5];
+      private		   Boolean []  decalage = new Boolean[] {false,false,false,false,false};
       /** indique au simulateur le décalage temporel pour chaque trajectoire **/
       private		   int []  dt = new int [5];
       /** indique au simulateur l'amplitude relative au decalage temporel **/
@@ -147,24 +147,29 @@
 			
 			
 			/////////////////////////////////
-			//Simulation Analogique Bruite//
+			//Simulation Analogique Bruite///
 			/////////////////////////////////
 			transmetteurAnalogiqueBruite = new TransmetteurBruiteAnalogique(snr);
-			transmetteurAnalogiqueBruiteReel = new TransmetteurBruiteAnalogiqueReel(snr,decalage,dt,ar);
 			destinationAnalogiqueBruite = new DestinationFinale();
-			destinationAnalogiqueBruiteReel = new DestinationFinale();
 			recepteurAnalogiqueBruite = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
-			recepteurAnalogiqueBruiteReel = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
-			
 			
 			//Connexion//
 			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);	
-			emetteurAnalogique.connecter(transmetteurAnalogiqueBruiteReel);	
 			transmetteurAnalogiqueBruite.connecter(recepteurAnalogiqueBruite);
-			transmetteurAnalogiqueBruiteReel.connecter(recepteurAnalogiqueBruiteReel);
 			recepteurAnalogiqueBruite.connecter(destinationAnalogiqueBruite);
-			recepteurAnalogiqueBruiteReel.connecter(destinationAnalogiqueBruiteReel);
 			
+			
+			/////////////////////////////////////
+			//Simulation Analogique Bruite Reel//
+			/////////////////////////////////////
+			transmetteurAnalogiqueBruiteReel = new TransmetteurBruiteAnalogiqueReel(snr,decalage,dt,ar);
+			destinationAnalogiqueBruiteReel = new DestinationFinale();
+			recepteurAnalogiqueBruiteReel = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
+			
+			//Connexion//
+			emetteurAnalogique.connecter(transmetteurAnalogiqueBruiteReel);	
+			transmetteurAnalogiqueBruiteReel.connecter(recepteurAnalogiqueBruiteReel);
+			recepteurAnalogiqueBruiteReel.connecter(destinationAnalogiqueBruiteReel);
 			
 			/////////////
 			//Affichage//
@@ -311,64 +316,29 @@
                		throw new ArgumentsException("Valeur de parametre -snr invalide : " + args[i]);	
             	}
             }
-            
             else if (args[i].matches("-ti")){
-            	i++; 
-            	for(int j=0;j<5;j++){
-            		decalage[j] = false;
+            	i++;
+            	if(args[i].matches("[1-5]")){
+            		decalage[Integer.parseInt(args[i])-1] = true;
+            		i++;
+                	if(args[i].matches("[1-9][0-9]*")){
+                		dt[Integer.parseInt(args[i-1])-1] = Integer.parseInt(args[i]);
+                		i++;
+                		if(args[i].matches("0\\.[0-9]*[1-9]")){
+                			ar[Integer.parseInt(args[i-2])-1] = Float.parseFloat(args[i]);
+                		}
+                		else{
+                       		throw new ArgumentsException("Valeur de parametre -ti amplitude invalide : " + args[i]);	
+                    	}
+                	}
+                	else{
+                   		throw new ArgumentsException("Valeur de parametre -ti décalage invalide : " + args[i]);	
+                	}
             	}
-            	if(args[i].matches("[1]")){
-            		decalage[0] = true;
-            		i++;
-            		if(args[i].matches("[1-9][0-9]*"))
-            			dt[0] = (int)Float.parseFloat(args[i]);
-            		i++;
-            		if(args[i].matches("[0].[0-9][0-9]*"))
-            			ar[0] = Float.parseFloat(args[i]);
-            	}
-            	else if(args[i].matches("[2]")){
-            		decalage[1] = true;
-            		i++;
-            		if(args[i].matches("[1-9][0-9]*"))
-            			dt[1] = (int)Float.parseFloat(args[i]);
-            		i++;
-            		if(args[i].matches("[0].[0-9][0-9]*"))
-            			ar[1] = Float.parseFloat(args[i]);
-            	}
-            	else if(args[i].matches("[3]")){
-            		decalage[2] = true;
-            		i++;
-            		if(args[i].matches("[1-9][0-9]*"))
-            			dt[2] = (int)Float.parseFloat(args[i]);
-            		i++;
-            		if(args[i].matches("[0].[0-9][0-9]*"))
-            			ar[2] = Float.parseFloat(args[i]);
-            	}
-            	else if(args[i].matches("[4]")){
-            		decalage[3] = true;
-            		i++;
-            		if(args[i].matches("[1-9][0-9]*"))
-            			dt[3] = (int)Float.parseFloat(args[i]);
-            		i++;
-            		if(args[i].matches("[0].[0-9][0-9]*"))
-            			ar[3] = Float.parseFloat(args[i]);
-            	}
-            	else if(args[i].matches("[5]")){
-            		decalage[4] = true;
-            		i++;
-            		if(args[i].matches("[1-9][0-9]*"))
-            			dt[4] = (int)Float.parseFloat(args[i]);
-            		i++;
-            		if(args[i].matches("[0].[0-9][0-9]*"))
-            			ar[4] = Float.parseFloat(args[i]);
-            	}
-
             	else{
-               		throw new ArgumentsException("Valeur de parametre -ti invalide : " + args[i]);	
+               		throw new ArgumentsException("Valeur de parametre -ti trajet invalide : " + args[i]);	
             	}
             }
-            
-            
             else throw new ArgumentsException("Option invalide :"+ args[i]);
                   
          }

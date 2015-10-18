@@ -33,55 +33,81 @@ import sources.SourceFixe;
 import transmetteurs.EmetteurAnalogique;
 
 public class RecepteurAnalogiqueTest {
+	private float aMin;
+	private float aMax;
+	
+	Source<Boolean> source;
+	EmetteurAnalogique eaRZ;
+	EmetteurAnalogique eaNRZ;
+	EmetteurAnalogique eaNRZT;
+	TransmetteurParfaitAnalogique tpaRZ;
+	TransmetteurParfaitAnalogique tpaNRZ;
+	TransmetteurParfaitAnalogique tpaNRZT;
+	RecepteurAnalogique raRZ;
+	RecepteurAnalogique raNRZ;
+	RecepteurAnalogique raNRZT;
+	
+	Information<Boolean> inf;
+	
 
 	@Before
 	public void setUp() throws Exception {
+		aMin = 1.0f;
+		aMax = 5.0f;
 		
+		source = new SourceFixe("0001");
+		eaRZ = new EmetteurAnalogique(aMin, aMax, "RZ", 30);
+		eaNRZ = new EmetteurAnalogique(aMin, aMax, "NRZ", 30);
+		eaNRZT = new EmetteurAnalogique(aMin, aMax, "NRZT", 30);
+		tpaRZ = new TransmetteurParfaitAnalogique();
+		tpaNRZ = new TransmetteurParfaitAnalogique();
+		tpaNRZT = new TransmetteurParfaitAnalogique();
+		raRZ = new RecepteurAnalogique(aMin, aMax, "RZ", 30);
+		raNRZ = new RecepteurAnalogique(aMin, aMax, "NRZ", 30);
+		raNRZT = new RecepteurAnalogique(aMin, aMax, "NRZT", 30);
+		
+		source.connecter(eaNRZ);
+		source.connecter(eaRZ);
+		source.connecter(eaNRZT);
+		eaRZ.connecter(tpaRZ);
+		eaNRZ.connecter(tpaNRZ);
+		eaNRZT.connecter(tpaNRZT);
+		tpaRZ.connecter(raRZ);
+		tpaNRZ.connecter(raNRZ);
+		tpaNRZT.connecter(raNRZT);
+		
+		source.emettre();
+		eaRZ.coder();
+		eaNRZ.coder();
+		eaNRZT.coder();
+		eaRZ.emettre();
+		eaNRZ.emettre();
+		eaNRZT.emettre();
+		tpaRZ.emettre();
+		tpaNRZ.emettre();
+		tpaNRZT.emettre();
+		raRZ.decoder();
+		raNRZ.decoder();
+		raNRZT.decoder();
+		
+		inf = new Information<Boolean>();
+		inf.add(false);
+		inf.add(false);
+		inf.add(false);
+		inf.add(true);
 	}
 
 	@Test
-	public void testDecoder() {
-		float aMax = 5.0f;
-		float aMin = 1.0f;
-		Source <Boolean> source = new SourceFixe("0001");
-		EmetteurAnalogique EA_NRZ = new EmetteurAnalogique(aMin,aMax,"NRZ",30);
-		TransmetteurParfaitAnalogique TPA = new TransmetteurParfaitAnalogique();
-		RecepteurAnalogique RA_NRZ = new RecepteurAnalogique(aMin,aMax,"NRZ",30);
-		source.connecter(EA_NRZ);
-		EA_NRZ.connecter(TPA);
-		TPA.connecter(RA_NRZ);
-		Information <Boolean> inf_NRZ = new Information <Boolean>();
-		
-	  	 try{
-	         source.emettre();
-  	 }
-  	 catch (InformationNonConforme e){
-  	 }
-	  	EA_NRZ.coder();
-		 try{
-	         EA_NRZ.emettre();
-  	 }
-  	 catch (InformationNonConforme e){
-  	 }
-		 try{
-	         TPA.emettre();
-  	 }
-  	 catch (InformationNonConforme e){
-  	 }
-	  	
-	  	RA_NRZ.decoder();
-	  	
-	  	inf_NRZ.add(false);
-	  	inf_NRZ.add(false);
-	  	inf_NRZ.add(false);
-	  	inf_NRZ.add(true);
-	  	
-		System.out.println(inf_NRZ.toString());
-		System.out.println(RA_NRZ.getInformationDecodee().toString());
-	  	
-	  	assertTrue(RA_NRZ.getInformationDecodee().equals(inf_NRZ));
-	  	
-	  	 
+	public void testDecoderRZ() {
+	  	assertTrue(raRZ.getInformationDecodee().equals(inf));
+	}
+	@Test
+	public void testDecoderNRZ() {
+	  	assertTrue(raNRZ.getInformationDecodee().equals(inf));
+	}
+	@Test
+	public void testDecoderNRZT() {
+	  	assertTrue(raNRZT.getInformationDecodee().equals(inf));
 	}
 
 }

@@ -20,7 +20,7 @@
    import java.io.PrintWriter;
 
 
-/** La classe Simulateur permet de construire et simuler une chaÓne de transmission composÈe d'une Source, d'un nombre variable de Transmetteur(s) et d'une Destination.  
+/** La classe Simulateur permet de construire et simuler une cha√Æne de transmission compos√©e d'une Source, d'un nombre variable de Transmetteur(s) et d'une Destination.  
  * @author cousin
  * @author prou
  *
@@ -29,26 +29,32 @@
       	
    /** indique si le Simulateur utilise des sondes d'affichage */
       private          boolean affichage = true	;
-   /** indique si le Simulateur utilise un message gÈnÈrÈ de maniËre alÈatoire */
+   /** indique si le Simulateur utilise un message g√©n√©r√© de mani√®re al√©atoire */
       private          boolean messageAleatoire = false;
-   /** indique si le Simulateur utilise un germe pour initialiser les gÈnÈrateurs alÈatoires */
+   /** indique si le Simulateur utilise un germe pour initialiser les g√©n√©rateurs al√©atoires */
       private          boolean aleatoireAvecGerme = false;
-   /** la valeur de la semence utilisÈe pour les gÈnÈrateurs alÈatoires */
+   /** la valeur de la semence utilis√©e pour les g√©n√©rateurs al√©atoires */
       private          Integer seed = null;
-   /** la longueur du message alÈatoire ‡ transmettre si un message n'est pas impose */
+   /** la longueur du message al√©atoire √† transmettre si un message n'est pas impose */
       private          int nbBitsMess = 100; 
-   /** la chaÓne de caractËres correspondant ‡ m dans l'argument -mess m */
+   /** la cha√Æne de caract√®res correspondant √† m dans l'argument -mess m */
       private          String messageString = "100";
-   /** indique au simulateur le type de codage utilisé **/
+   /** indique au simulateur le type de codage utilis≈Ω **/
       private		   String codage = "RZ";
-   /** indique au simulateur le nombre d'échantillon à utiliser **/
+   /** indique au simulateur le nombre d'≈Ωchantillon ÀÜ utiliser **/
       private		   int nbEchantillons = 30;
    /** indique au simulateur la tension du niveau 0 **/
       private		   float aMin = 0.0f;
    /** indique au simulateur la tension du niveau 1 **/
       private		   float aMax = 1.0f;
-      /** indique au simulateur le rapport signal à bruit du transmetteur bruité **/
+      /** indique au simulateur le rapport signal ÀÜ bruit du transmetteur bruit≈Ω **/
       private		   float snr = 1f;
+      /** indique au simulateur les trajectoires de d√©calage. decalage[x] = true si on genere un signal decale x  **/
+      private		   Boolean []  decalage = new Boolean [5];
+      /** indique au simulateur le d√©calage temporel pour chaque trajectoire **/
+      private		   int []  dt = new int [5];
+      /** indique au simulateur l'amplitude relative au decalage temporel **/
+      private		   Float []  ar = new Float [5];
    	
    /** le  composant Source de la chaine de transmission */
       private			  Source <Boolean>  source = null;
@@ -60,20 +66,24 @@
       private			  Destination <Boolean>  destinationAnalogique = null;
       /** le  composant Destination de la chaine de transmission analogique avec bruit */
       private			  Destination <Boolean>  destinationAnalogiqueBruite = null;
+      /** le  composant Destination de la chaine de transmission analogique avec bruit reel */
+      private			  Destination <Boolean>  destinationAnalogiqueBruiteReel = null;
       
    /** le composant Sonde de la Source de la chaine de transmission */
       private SondeLogique sondeSource = null;
    /** le composant Sonde de la Destination de la chaine de transmission */
       private SondeLogique sondeDestination = null;
-   /** le composant Sonde bruité de la Destination de la chaine de transmission */
+   /** le composant Sonde bruit≈Ω de la Destination de la chaine de transmission */
       private SondeLogique sondeDestinationBruite = null;   
       
    /** le composant Sonde analogique de la Source de la chaine de transmission */
       private SondeAnalogique sondeSourceAnalogique = null;
    /** le composant Sonde analogique de la Destination de la chaine de transmission */
       private SondeAnalogique sondeDestinationAnalogique = null;
-   /** le composant Sonde analogique de la Destination de la chaine de transmission avec bruit*/
+      /** le composant Sonde analogique de la Destination de la chaine de transmission avec bruit*/
       private SondeAnalogique sondeDestinationAnalogiqueBruite = null;
+      /** le composant Sonde analogique de la Destination de la chaine de transmission avec bruit r√©el*/
+      private SondeAnalogique sondeDestinationAnalogiqueBruiteReel = null;
 
 
    /** le  composant Emetteur analogique de la chaine de transmission */
@@ -84,15 +94,19 @@
    /** le  composant Recepteur analogique de la chaine de transmission */
       private			  RecepteurAnalogique recepteurAnalogique = null;
       
-   /** le  composant Transmetteur analogique bruité de la chaine de transmission */
-      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null;       
-   /** le  composant Recepteur analogique bruité de la chaine de transmission */
+      /** le  composant Transmetteur analogique bruit≈Ω de la chaine de transmission */
+      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null; 
+      /** le  composant Transmetteur analogique bruit√© r√©el de la chaine de transmission */
+      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruiteReel = null; 
+      /** le  composant Recepteur analogique bruit≈Ω de la chaine de transmission */
       private			  RecepteurAnalogique recepteurAnalogiqueBruite = null;
+      /** le  composant Recepteur analogique bruit≈Ω de la chaine de transmission */
+      private			  RecepteurAnalogique recepteurAnalogiqueBruiteReel = null;
  
       
-   /** Le constructeur de Simulateur construit une chaÓne de transmission composÈe d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la mÈthode analyseArguments]...  
-   * <br> Les diffÈrents composants de la chaÓne de transmission (Source, Transmetteur(s), Destination, Sonde(s) de visualisation) sont crÈÈs et connectÈs.
-   * @param args le tableau des diffÈrents arguments.
+   /** Le constructeur de Simulateur construit une cha√Æne de transmission compos√©e d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la m√©thode analyseArguments]...  
+   * <br> Les diff√©rents composants de la cha√Æne de transmission (Source, Transmetteur(s), Destination, Sonde(s) de visualisation) sont cr√©√©s et connect√©s.
+   * @param args le tableau des diff√©rents arguments.
    *
    * @throws ArgumentsException si un des arguments est incorrect
    *
@@ -136,14 +150,20 @@
 			//Simulation Analogique Bruite//
 			/////////////////////////////////
 			transmetteurAnalogiqueBruite = new TransmetteurBruiteAnalogique(snr);
+			transmetteurAnalogiqueBruiteReel = new TransmetteurBruiteAnalogiqueReel(snr,decalage,dt,ar);
 			destinationAnalogiqueBruite = new DestinationFinale();
+			destinationAnalogiqueBruiteReel = new DestinationFinale();
 			recepteurAnalogiqueBruite = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
+			recepteurAnalogiqueBruiteReel = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
 			
 			
 			//Connexion//
 			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);	
-			transmetteurAnalogiqueBruite.connecter(recepteurAnalogiqueBruite);	
+			emetteurAnalogique.connecter(transmetteurAnalogiqueBruiteReel);	
+			transmetteurAnalogiqueBruite.connecter(recepteurAnalogiqueBruite);
+			transmetteurAnalogiqueBruiteReel.connecter(recepteurAnalogiqueBruiteReel);
 			recepteurAnalogiqueBruite.connecter(destinationAnalogiqueBruite);
+			recepteurAnalogiqueBruiteReel.connecter(destinationAnalogiqueBruiteReel);
 			
 			
 			/////////////
@@ -164,11 +184,13 @@
 				emetteurAnalogique.connecter(sondeSourceAnalogique);
 				transmetteurAnalogique.connecter(sondeDestinationAnalogique);	
 				
-				//Message analogique bruité//
+				//Message analogique bruit≈Ω//
 				sondeDestinationAnalogiqueBruite = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
+				sondeDestinationAnalogiqueBruiteReel = new SondeAnalogique("Sonde Destination Analogique avec Bruit Reel");
 				sondeDestinationBruite = new SondeLogique("Sonde Destination Logique sans Bruit", 100);
 				//Connexion//
 				transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruite);
+				transmetteurAnalogiqueBruiteReel.connecter(sondeDestinationAnalogiqueBruiteReel);
 				recepteurAnalogiqueBruite.connecter(sondeDestinationBruite);
 			}
 			
@@ -176,35 +198,35 @@
    
    
    
-   /** La mÈthode analyseArguments extrait d'un tableau de chaÓnes de caractËres les diffÈrentes options de la simulation. 
-   * Elle met ‡ jour les attributs du Simulateur.
+   /** La m√©thode analyseArguments extrait d'un tableau de cha√Ænes de caract√®res les diff√©rentes options de la simulation. 
+   * Elle met √† jour les attributs du Simulateur.
    *
-   * @param args le tableau des diffÈrents arguments.
+   * @param args le tableau des diff√©rents arguments.
    * <br>
-   * <br>Les arguments autorisÈs sont : 
+   * <br>Les arguments autoris√©s sont : 
    * <br> 
    * <dl>
-   * <dt> -mess m  </dt><dd> m (String) constituÈ de 7 ou plus digits ‡ 0 | 1, le message ‡ transmettre</dd>
-   * <dt> -mess m  </dt><dd> m (int) constituÈ de 1 ‡ 6 digits, le nombre de bits du message "alÈatoire" ‡† transmettre</dd> 
+   * <dt> -mess m  </dt><dd> m (String) constitu√© de 7 ou plus digits √† 0 | 1, le message √† transmettre</dd>
+   * <dt> -mess m  </dt><dd> m (int) constitu√© de 1 √† 6 digits, le nombre de bits du message "al√©atoire" √†¬† transmettre</dd> 
    * <dt> -s </dt><dd> utilisation des sondes d'affichage</dd>
-   * <dt> -seed v </dt><dd> v (int) d'initialisation pour les gÈnÈrateurs alÈatoires</dd> 
+   * <dt> -seed v </dt><dd> v (int) d'initialisation pour les g√©n√©rateurs al√©atoires</dd> 
    * <br>
-   * <dt> -form f </dt><dd>  codage (String) RZ, NRZR, NRZT, la forme d'onde du signal ‡ transmettre (RZ par dÈfaut)</dd>
-   * <dt> -nbEch ne </dt><dd> ne (int) le nombre d'Èchantillons par bit (ne >= 6 pour du RZ, ne >= 9 pour du NRZT, ne >= 18 pour du RZ,  30 par dÈfaut))</dd>
-   * <dt> -ampl min max </dt><dd>  min (float) et max (float), les amplitudes min et max du signal analogique ‡ transmettre ( min < max, 0.0 et 1.0 par dÈfaut))</dd> 
+   * <dt> -form f </dt><dd>  codage (String) RZ, NRZR, NRZT, la forme d'onde du signal √† transmettre (RZ par d√©faut)</dd>
+   * <dt> -nbEch ne </dt><dd> ne (int) le nombre d'√©chantillons par bit (ne >= 6 pour du RZ, ne >= 9 pour du NRZT, ne >= 18 pour du RZ,  30 par d√©faut))</dd>
+   * <dt> -ampl min max </dt><dd>  min (float) et max (float), les amplitudes min et max du signal analogique √† transmettre ( min < max, 0.0 et 1.0 par d√©faut))</dd> 
    * <br>
    * <dt> -snr s </dt><dd> s (float) le rapport signal/bruit en dB</dd>
    * <br>
-   * <dt> -ti i dt ar </dt><dd> i (int) numero du trajet indirect (de 1 ‡ 5), dt (int) valeur du decalage temporel du iËme trajet indirect 
-   * en nombre d'Èchantillons par bit, ar (float) amplitude relative au signal initial du signal ayant effectuÈ le iËme trajet indirect</dd>
+   * <dt> -ti i dt ar </dt><dd> i (int) numero du trajet indirect (de 1 √† 5), dt (int) valeur du decalage temporel du i√®me trajet indirect 
+   * en nombre d'√©chantillons par bit, ar (float) amplitude relative au signal initial du signal ayant effectu√© le i√®me trajet indirect</dd>
    * <br>
    * <dt> -transducteur </dt><dd> utilisation de transducteur</dd>
    * <br>
-   * <dt> -aveugle </dt><dd> les rÈcepteurs ne connaissent ni l'amplitude min et max du signal, ni les diffÈrents trajets indirects (s'il y en a).</dd>
+   * <dt> -aveugle </dt><dd> les r√©cepteurs ne connaissent ni l'amplitude min et max du signal, ni les diff√©rents trajets indirects (s'il y en a).</dd>
    * <br>
    * </dl>
    * <br> <b>Contraintes</b> :
-   * Il y a des interdÈpendances sur les paramËtres effectifs. 
+   * Il y a des interd√©pendances sur les param√®tres effectifs. 
    *
    * @throws ArgumentsException si un des arguments est incorrect.
    *
@@ -289,17 +311,76 @@
                		throw new ArgumentsException("Valeur de parametre -snr invalide : " + args[i]);	
             	}
             }
+            
+            else if (args[i].matches("-ti")){
+            	i++; 
+            	for(int j=0;j<5;j++){
+            		decalage[j] = false;
+            	}
+            	if(args[i].matches("[1]")){
+            		decalage[0] = true;
+            		i++;
+            		if(args[i].matches("[1-9][0-9]*"))
+            			dt[0] = (int)Float.parseFloat(args[i]);
+            		i++;
+            		if(args[i].matches("[0].[0-9][0-9]*"))
+            			ar[0] = Float.parseFloat(args[i]);
+            	}
+            	else if(args[i].matches("[2]")){
+            		decalage[1] = true;
+            		i++;
+            		if(args[i].matches("[1-9][0-9]*"))
+            			dt[1] = (int)Float.parseFloat(args[i]);
+            		i++;
+            		if(args[i].matches("[0].[0-9][0-9]*"))
+            			ar[1] = Float.parseFloat(args[i]);
+            	}
+            	else if(args[i].matches("[3]")){
+            		decalage[2] = true;
+            		i++;
+            		if(args[i].matches("[1-9][0-9]*"))
+            			dt[2] = (int)Float.parseFloat(args[i]);
+            		i++;
+            		if(args[i].matches("[0].[0-9][0-9]*"))
+            			ar[2] = Float.parseFloat(args[i]);
+            	}
+            	else if(args[i].matches("[4]")){
+            		decalage[3] = true;
+            		i++;
+            		if(args[i].matches("[1-9][0-9]*"))
+            			dt[3] = (int)Float.parseFloat(args[i]);
+            		i++;
+            		if(args[i].matches("[0].[0-9][0-9]*"))
+            			ar[3] = Float.parseFloat(args[i]);
+            	}
+            	else if(args[i].matches("[5]")){
+            		decalage[4] = true;
+            		i++;
+            		if(args[i].matches("[1-9][0-9]*"))
+            			dt[4] = (int)Float.parseFloat(args[i]);
+            		i++;
+            		if(args[i].matches("[0].[0-9][0-9]*"))
+            			ar[4] = Float.parseFloat(args[i]);
+            	}
+
+            	else{
+               		throw new ArgumentsException("Valeur de parametre -ti invalide : " + args[i]);	
+            	}
+            }
+            
+            
             else throw new ArgumentsException("Option invalide :"+ args[i]);
+                  
          }
-      
+  
       }
      
     
    	
-   /** La mÈthode execute effectue un envoi de message par la source de la chaÓne de transmission du Simulateur. 
+   /** La m√©thode execute effectue un envoi de message par la source de la cha√Æne de transmission du Simulateur. 
    * @return les options explicites de simulation.
    *
-   * @throws Exception si un problËme survient lors de l'exÈcution
+   * @throws Exception si un probl√®me survient lors de l'ex√©cution
    *
    */ 
       public void execute() throws Exception {      
@@ -307,11 +388,17 @@
 	         source.emettre();
 	         transmetteurLogique.emettre();
 	         emetteurAnalogique.coder();
-	         emetteurAnalogique.emettre();       
+	         emetteurAnalogique.emettre();
+	         
 	         transmetteurAnalogique.emettre();
 	         transmetteurAnalogiqueBruite.emettre();
+	         transmetteurAnalogiqueBruiteReel.emettre();
+	         
 	         recepteurAnalogiqueBruite.decoder();
 	         recepteurAnalogiqueBruite.emettre();
+	         recepteurAnalogiqueBruiteReel.emettre();
+	         
+	         transmetteurAnalogiqueBruite.lInfo();
     	 }
     	 catch (Exception e){
     		 throw new Exception("Erreur lors de l'envoi sur la chaine de transmission");
@@ -337,8 +424,8 @@
    
    
    
-   /** La fonction main instancie un Simulateur ‡ l'aide des arguments paramËtres et affiche le rÈsultat de l'exÈcution d'une transmission.
-   *  @param args les diffÈrents arguments qui serviront ‡ l'instanciation du Simulateur.
+   /** La fonction main instancie un Simulateur √† l'aide des arguments param√®tres et affiche le r√©sultat de l'ex√©cution d'une transmission.
+   *  @param args les diff√©rents arguments qui serviront √† l'instanciation du Simulateur.
    */
       public static void main(String [] args) { 
       

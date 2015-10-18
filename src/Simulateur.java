@@ -28,7 +28,7 @@
    public class Simulateur {
       	
    /** indique si le Simulateur utilise des sondes d'affichage */
-      private          boolean affichage = true	;
+      private          boolean affichage = false	;
    /** indique si le Simulateur utilise un message généré de manière aléatoire */
       private          boolean messageAleatoire = false;
    /** indique si le Simulateur utilise un germe pour initialiser les générateurs aléatoires */
@@ -48,7 +48,7 @@
    /** indique au simulateur la tension du niveau 1 **/
       private		   float aMax = 1.0f;
       /** indique au simulateur le rapport signal ˆ bruit du transmetteur bruité **/
-      private		   float snr = 1f;
+      private		   float snr = 30f;
       /** indique au simulateur les trajectoires de décalage. decalage[x] = true si on genere un signal decale x  **/
       private		   Boolean []  decalage = new Boolean[] {false,false,false,false,false};
       /** indique au simulateur le décalage temporel pour chaque trajectoire **/
@@ -74,7 +74,9 @@
    /** le composant Sonde de la Destination de la chaine de transmission */
       private SondeLogique sondeDestination = null;
    /** le composant Sonde bruité de la Destination de la chaine de transmission */
-      private SondeLogique sondeDestinationBruite = null;   
+      private SondeLogique sondeDestinationBruite = null; 
+   /** le composant Sonde bruité de la Destination de la chaine de transmission */
+      private SondeLogique sondeDestinationBruiteReel = null;  
       
    /** le composant Sonde analogique de la Source de la chaine de transmission */
       private SondeAnalogique sondeSourceAnalogique = null;
@@ -174,7 +176,7 @@
 			/////////////
 			//Affichage//
 			/////////////
-			if (affichage == true){
+			if (affichage){
 				//Message de base//
 				sondeSource = new SondeLogique("Sonde Source", 100);
 				sondeDestination = new SondeLogique("Sonde Destination", 100);
@@ -189,14 +191,19 @@
 				emetteurAnalogique.connecter(sondeSourceAnalogique);
 				transmetteurAnalogique.connecter(sondeDestinationAnalogique);	
 				
-				//Message analogique bruitŽ//
+				//Message analogique bruité//
 				sondeDestinationAnalogiqueBruite = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
-				sondeDestinationAnalogiqueBruiteReel = new SondeAnalogique("Sonde Destination Analogique avec Bruit Reel");
 				sondeDestinationBruite = new SondeLogique("Sonde Destination Logique sans Bruit", 100);
 				//Connexion//
 				transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruite);
-				transmetteurAnalogiqueBruiteReel.connecter(sondeDestinationAnalogiqueBruiteReel);
 				recepteurAnalogiqueBruite.connecter(sondeDestinationBruite);
+				
+				//Message analogique bruité réel//
+				sondeDestinationAnalogiqueBruiteReel = new SondeAnalogique("Sonde Destination Analogique avec Bruit Reel");
+				sondeDestinationBruiteReel = new SondeLogique("Sonde Destination Logique sans Bruit Reel", 100);
+				//Connexion//
+				transmetteurAnalogiqueBruiteReel.connecter(sondeDestinationAnalogiqueBruiteReel);
+				recepteurAnalogiqueBruiteReel.connecter(sondeDestinationBruiteReel);
 			}
 			
       }
@@ -275,7 +282,7 @@
             }
             else if (args[i].matches("-form")){
             	i++; 
-            	if((args[i].matches("RZ"))|(args[i].matches("NRZ"))|(args[i].matches("NRZT"))){
+            	if((args[i].matches("RZ|NRZ|NRZT"))){
             		codage = args[i];
             	}
             	else{
@@ -285,7 +292,12 @@
             else if (args[i].matches("-nbEch")){
             	i++; 
             	if(args[i].matches("[1-9][0-9]*")){
+            		if(((codage.equals("RZ"))&&(Integer.parseInt(args[i])>=6))||((codage.equals("NRZ"))&&(Integer.parseInt(args[i])>=9))||((codage.equals("NRZT"))&&(Integer.parseInt(args[i])>=18))){
             		nbEchantillons = Integer.parseInt(args[i]);
+            		}
+            		else{
+                		throw new ArgumentsException("Valeur de parametre -nbEch invalide pour le codage demandé : " + args[i]);
+                	}
             	}
             	else{
             		throw new ArgumentsException("Valeur de parametre -nbEch invalide : " + args[i]);

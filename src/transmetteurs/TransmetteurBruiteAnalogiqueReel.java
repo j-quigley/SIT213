@@ -4,8 +4,6 @@ import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConforme;
 import java.util.*;
-import java.io.*;
-import  java.lang.*;
 
 public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float> {
 
@@ -15,10 +13,9 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	private double sigma_b = 0;
 	
 	private Information <Float>  informationGeneree;
-	private Information <Float>  informationDeDecalage;
 	private Information <Float>  informationATransmettre;
 	
-	private Information <Float> [] informationDecalee= new Information  [5];
+	private Information <Float> [] informationDecalee= new Information[5];
 	
 	private Boolean decalage[] = new Boolean[5];
 	private int dt[] = new int[5];
@@ -104,9 +101,9 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 		ajouterDecalage();
 		
         for (DestinationInterface <Float> destinationConnectee : destinationsConnectees) {
-            destinationConnectee.recevoir(informationGeneree);
+            destinationConnectee.recevoir(informationATransmettre);
          }
-         this.informationEmise = informationGeneree; 
+         this.informationEmise = informationATransmettre; 
 
 	}
 

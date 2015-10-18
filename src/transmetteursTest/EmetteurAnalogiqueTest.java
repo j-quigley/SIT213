@@ -103,9 +103,15 @@ public class EmetteurAnalogiqueTest {
 	}
 
 	@Test
-	public void testCoder() {
+	public void testCoderRZ() {
 		assertTrue(infRZ.equals(eaRZ.getInformationCodee()));
+	}
+	@Test
+	public void testCoderNRZ() {
 		assertTrue(infNRZ.equals(eaNRZ.getInformationCodee()));
+	}
+	@Test
+	public void testCoderNRZT() {
 		assertTrue(infNRZT.equals(eaNRZT.getInformationCodee()));
 	}
 }

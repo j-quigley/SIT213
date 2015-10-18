@@ -98,9 +98,15 @@ public class RecepteurAnalogiqueTest {
 	}
 
 	@Test
-	public void testDecoder() {
+	public void testDecoderRZ() {
 	  	assertTrue(raRZ.getInformationDecodee().equals(inf));
+	}
+	@Test
+	public void testDecoderNRZ() {
 	  	assertTrue(raNRZ.getInformationDecodee().equals(inf));
+	}
+	@Test
+	public void testDecoderNRZT() {
 	  	assertTrue(raNRZT.getInformationDecodee().equals(inf));
 	}
 

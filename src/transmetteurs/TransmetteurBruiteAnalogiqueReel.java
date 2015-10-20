@@ -47,13 +47,14 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	public Information <Float> decalerSignal (float ar, int dt){
 
 		Information <Float>  info = new Information<Float>();
-		
+		int compteur = 0;
 		for(int i = 0; i<informationRecue.nbElements(); i++){
 			if (i<dt){
 				info.add(0.0f);
 			}
 			else {	
-				info.add((ar*informationRecue.iemeElement(i))); 
+				info.add((ar*informationRecue.iemeElement(compteur)));
+				compteur++;
 			}
 		}
 		return info;

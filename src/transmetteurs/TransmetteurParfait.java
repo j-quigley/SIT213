@@ -1,6 +1,5 @@
 package transmetteurs;
 
-import java.util.LinkedList;
 
 import destinations.DestinationInterface;
 import information.Information;
@@ -10,8 +9,8 @@ public class TransmetteurParfait extends Transmetteur<Boolean, Boolean>{
 
     public TransmetteurParfait() {
         super();
-        informationRecue = new Information();
-        informationEmise = new Information();
+        informationRecue = new Information<Boolean>();
+        informationEmise = new Information<Boolean>();
      }
 
 	

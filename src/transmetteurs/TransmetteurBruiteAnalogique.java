@@ -13,6 +13,7 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 	private double ps = 0;
 	private double pb = 0;
 	private double sigma_b = 0;
+	private int seed = -100000;
 	
 	private Information <Float>  informationGeneree;
 	
@@ -24,8 +25,20 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 	    this.snr = snr;
 	}
 	
+	public TransmetteurBruiteAnalogique(float snr, int seed) {
+		super();
+		informationRecue = new Information<Float>();
+		informationGeneree = new Information<Float>();
+	    informationEmise = new Information<Float>();
+	    this.snr = snr;
+	    this.seed = seed;
+	}
+	
 	public float genererBruit (){
 		Random rand = new Random();
+		if(seed != -100000){
+			rand.setSeed(seed);
+		}
 		double a1 = rand.nextInt(1000);
 		a1 /= 1000;
 		double a2 = rand.nextInt(1000);

@@ -28,55 +28,56 @@
    public class Simulateur {
       	
    /** indique si le Simulateur utilise des sondes d'affichage */
-      private          boolean affichage = false	;
+      private boolean affichage = false	;
    /** indique si le Simulateur utilise un message généré de manière aléatoire */
-      private          boolean messageAleatoire = false;
+      private boolean messageAleatoire = false;
    /** indique si le Simulateur utilise un germe pour initialiser les générateurs aléatoires */
-      private          boolean aleatoireAvecGerme = false;
+      private boolean aleatoireAvecGerme = false;
+   /** indique si le Simulateur utilise un transducteur */      
+      private boolean transducteur = false;
    /** la valeur de la semence utilisée pour les générateurs aléatoires */
-      private          Integer seed = null;
+      private int seed = 0;
    /** la longueur du message aléatoire à transmettre si un message n'est pas impose */
-      private          int nbBitsMess = 100; 
+      private int nbBitsMess = 100; 
    /** la chaîne de caractères correspondant à m dans l'argument -mess m */
-      private          String messageString = "100";
+      private String messageString = "100";
    /** indique au simulateur le type de codage utilisé **/
-      private		   String codage = "RZ";
+      private String codage = "RZ";
    /** indique au simulateur le nombre d'échantillon à utiliser **/
-      private		   int nbEchantillons = 30;
+      private int nbEchantillons = 30;
    /** indique au simulateur la tension du niveau 0 **/
-      private		   float aMin = 0.0f;
+      private float aMin = 0.0f;
    /** indique au simulateur la tension du niveau 1 **/
-      private		   float aMax = 1.0f;
+      private float aMax = 1.0f;
       /** indique au simulateur le rapport signal ˆ bruit du transmetteur bruité **/
-      private		   float snr = 30f;
+      private float snr = 100000f;
       /** indique au simulateur les trajectoires de décalage. decalage[x] = true si on genere un signal decale x  **/
-      private		   Boolean []  decalage = new Boolean[] {false,false,false,false,false};
+      private Boolean []  decalage = new Boolean[] {false,false,false,false,false};
       /** indique au simulateur le décalage temporel pour chaque trajectoire **/
-      private		   int []  dt = new int [5];
+      private int []  dt = new int [5];
       /** indique au simulateur l'amplitude relative au decalage temporel **/
-      private		   Float []  ar = new Float [5];
+      private Float []  ar = new Float [5];
    	
    /** le  composant Source de la chaine de transmission */
-      private			  Source <Boolean>  source = null;
-   /** le  composant Transmetteur parfait logique de la chaine de transmission */
-      private			  Transmetteur <Boolean, Boolean>  transmetteurLogique = null;
+      private Source <Boolean>  source = null;
+   /** le  composant Transmetteur parfait logique d'emission de la chaine de transmission */
+      private Transmetteur <Boolean, Boolean>  transmetteurLogiqueEmission = null;
+   /** le  composant Transmetteur parfait logique de reception de la chaine de transmission */
+      private Transmetteur <Boolean, Boolean>  transmetteurLogiqueReception = null;
    /** le  composant Destination de la chaine de transmission */
-      private			  Destination <Boolean>  destination = null;
-      /** le  composant Destination de la chaine de transmission analogique */
-      private			  Destination <Boolean>  destinationAnalogique = null;
-      /** le  composant Destination de la chaine de transmission analogique avec bruit */
-      private			  Destination <Boolean>  destinationAnalogiqueBruite = null;
-      /** le  composant Destination de la chaine de transmission analogique avec bruit reel */
-      private			  Destination <Boolean>  destinationAnalogiqueBruiteReel = null;
+      private Destination <Boolean>  destination = null;
+
       
    /** le composant Sonde de la Source de la chaine de transmission */
       private SondeLogique sondeSource = null;
+   /** le composant Sonde de la Source de la chaine de transmission */
+      private SondeLogique sondeSourceTransducte = null;
    /** le composant Sonde de la Destination de la chaine de transmission */
       private SondeLogique sondeDestination = null;
+   /** le composant Sonde de la Destination de la chaine de transmission */
+      private SondeLogique sondeDestinationTransducte = null;
    /** le composant Sonde bruité de la Destination de la chaine de transmission */
-      private SondeLogique sondeDestinationBruite = null; 
-   /** le composant Sonde bruité de la Destination de la chaine de transmission */
-      private SondeLogique sondeDestinationBruiteReel = null;  
+
       
    /** le composant Sonde analogique de la Source de la chaine de transmission */
       private SondeAnalogique sondeSourceAnalogique = null;
@@ -89,22 +90,23 @@
 
 
    /** le  composant Emetteur analogique de la chaine de transmission */
-      private			  EmetteurAnalogique emetteurAnalogique = null;
+      private EmetteurAnalogique emetteurAnalogique = null;
       
    /** le  composant Transmetteur analogique parfait de la chaine de transmission */
-      private			  Transmetteur <Float, Float>  transmetteurAnalogique = null;
+      private Transmetteur <Float, Float>  transmetteurAnalogique = null;
    /** le  composant Recepteur analogique de la chaine de transmission */
-      private			  RecepteurAnalogique recepteurAnalogique = null;
+      private RecepteurAnalogique recepteurAnalogique = null;
       
       /** le  composant Transmetteur analogique bruité de la chaine de transmission */
-      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null; 
+      private Transmetteur <Float, Float>  transmetteurAnalogiqueBruite = null; 
       /** le  composant Transmetteur analogique bruité réel de la chaine de transmission */
-      private			  Transmetteur <Float, Float>  transmetteurAnalogiqueBruiteReel = null; 
-      /** le  composant Recepteur analogique bruité de la chaine de transmission */
-      private			  RecepteurAnalogique recepteurAnalogiqueBruite = null;
-      /** le  composant Recepteur analogique bruité de la chaine de transmission */
-      private			  RecepteurAnalogique recepteurAnalogiqueBruiteReel = null;
- 
+      private Transmetteur <Float, Float>  transmetteurAnalogiqueBruiteReel = null; 
+      
+
+      /** le  composant Transducteur Emission de la chaine de transmission */
+      private TransducteurEmission transducteurEmission = null;
+      /** le  composant Transducteur Reception de la chaine de transmission */
+      private TransducteurReception transducteurReception = null;
       
    /** Le constructeur de Simulateur construit une chaîne de transmission composée d'une Source <Boolean>, d'une Destination <Boolean> et de Transmetteur(s) [voir la méthode analyseArguments]...  
    * <br> Les différents composants de la chaîne de transmission (Source, Transmetteur(s), Destination, Sonde(s) de visualisation) sont créés et connectés.
@@ -116,94 +118,113 @@
       public  Simulateur(String [] args) throws ArgumentsException {
 			analyseArguments(args);
 			
-			//////////////////////
-			//Simulation logique//
-			//////////////////////
-			if(messageAleatoire == true){
+			//////////////
+			//Simulation//
+			/////////////
+			
+			//Source logique//
+			if(messageAleatoire){
     		    source = new SourceAleatoire(nbBitsMess);
     	    }
     	    else{
     		    source = new SourceFixe(messageString);
     	    }
-			transmetteurLogique = new TransmetteurParfait();
-			destination = new DestinationFinale();  
 			
-			//Connexion//
-			source.connecter(transmetteurLogique);
-			transmetteurLogique.connecter(destination);
+			//Transmetteur Logique parfait//
+			transmetteurLogiqueEmission = new TransmetteurParfait();
 			
+			//Transducteur//
+			if(transducteur){
+				transducteurEmission = new TransducteurEmission();
+				source.connecter(transducteurEmission);
+				transducteurEmission.connecter(transmetteurLogiqueEmission);
+				if(affichage){
+					sondeSource = new SondeLogique("Sonde Source", 100);
+					source.connecter(sondeSource);
+					sondeSourceTransducte = new SondeLogique("Sonde Source Transducté", 100);
+					transmetteurLogiqueEmission.connecter(sondeSourceTransducte);
+				}
+			}
+			else{
+				source.connecter(transmetteurLogiqueEmission);
+				if(affichage){
+					sondeSource = new SondeLogique("Sonde Source", 100);
+					source.connecter(sondeSource);
+				}
+			}
 			
-			//////////////////////////////////
-			//Simulation Analogique Parfaite//
-			//////////////////////////////////
+			//Sortie logique via le transmetteurLogique//
+			
+			//Emetteur Analogique//
 			emetteurAnalogique = new EmetteurAnalogique(aMin, aMax, codage, nbEchantillons);
-			transmetteurAnalogique = new TransmetteurParfaitAnalogique();
-			recepteurAnalogique = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
-			destinationAnalogique = new DestinationFinale();
-			
-			//Connexion//
-			source.connecter(emetteurAnalogique);
-			emetteurAnalogique.connecter(transmetteurAnalogique);
-			transmetteurAnalogique.connecter(recepteurAnalogique);
-			recepteurAnalogique.connecter(destinationAnalogique);
-			
-			
-			/////////////////////////////////
-			//Simulation Analogique Bruite///
-			/////////////////////////////////
-			transmetteurAnalogiqueBruite = new TransmetteurBruiteAnalogique(snr);
-			destinationAnalogiqueBruite = new DestinationFinale();
-			recepteurAnalogiqueBruite = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
-			
-			//Connexion//
-			emetteurAnalogique.connecter(transmetteurAnalogiqueBruite);	
-			transmetteurAnalogiqueBruite.connecter(recepteurAnalogiqueBruite);
-			recepteurAnalogiqueBruite.connecter(destinationAnalogiqueBruite);
-			
-			
-			/////////////////////////////////////
-			//Simulation Analogique Bruite Reel//
-			/////////////////////////////////////
-			transmetteurAnalogiqueBruiteReel = new TransmetteurBruiteAnalogiqueReel(snr,decalage,dt,ar);
-			destinationAnalogiqueBruiteReel = new DestinationFinale();
-			recepteurAnalogiqueBruiteReel = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons);
-			
-			//Connexion//
-			emetteurAnalogique.connecter(transmetteurAnalogiqueBruiteReel);	
-			transmetteurAnalogiqueBruiteReel.connecter(recepteurAnalogiqueBruiteReel);
-			recepteurAnalogiqueBruiteReel.connecter(destinationAnalogiqueBruiteReel);
-			
-			/////////////
-			//Affichage//
-			/////////////
-			if (affichage){
-				//Message de base//
-				sondeSource = new SondeLogique("Sonde Source", 100);
-				sondeDestination = new SondeLogique("Sonde Destination", 100);
-				//Connextion//
-				source.connecter(sondeSource);
-				transmetteurLogique.connecter(sondeDestination);
-				
-				//Message analogique parfait//
+			transmetteurLogiqueEmission.connecter(emetteurAnalogique);
+			if(affichage){
 				sondeSourceAnalogique = new SondeAnalogique("Sonde Source Analogique");
-				sondeDestinationAnalogique = new SondeAnalogique("Sonde Destination Analogique");
-				//Connexion//
 				emetteurAnalogique.connecter(sondeSourceAnalogique);
-				transmetteurAnalogique.connecter(sondeDestinationAnalogique);	
-				
-				//Message analogique bruité//
-				sondeDestinationAnalogiqueBruite = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
-				sondeDestinationBruite = new SondeLogique("Sonde Destination Logique sans Bruit", 100);
-				//Connexion//
-				transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruite);
-				recepteurAnalogiqueBruite.connecter(sondeDestinationBruite);
-				
-				//Message analogique bruité réel//
-				sondeDestinationAnalogiqueBruiteReel = new SondeAnalogique("Sonde Destination Analogique avec Bruit Reel");
-				sondeDestinationBruiteReel = new SondeLogique("Sonde Destination Logique sans Bruit Reel", 100);
-				//Connexion//
+			}
+			
+			//Transmetteur Analogique Bruite Reel//
+			transmetteurAnalogiqueBruiteReel = new TransmetteurBruiteAnalogiqueReel(decalage,dt,ar);
+			emetteurAnalogique.connecter(transmetteurAnalogiqueBruiteReel);
+			if(affichage&&(decalage[0]||decalage[1]||decalage[2]||decalage[3]||decalage[4])){
+				sondeDestinationAnalogiqueBruiteReel = new SondeAnalogique("Sonde Destination Analogique avec Multi-trajets");
 				transmetteurAnalogiqueBruiteReel.connecter(sondeDestinationAnalogiqueBruiteReel);
-				recepteurAnalogiqueBruiteReel.connecter(sondeDestinationBruiteReel);
+			}
+			
+			//Transmetteur Analogique Bruite//
+			if(aleatoireAvecGerme){
+				transmetteurAnalogiqueBruite = new TransmetteurBruiteAnalogique(snr, seed);
+			}
+			else{
+				transmetteurAnalogiqueBruite = new TransmetteurBruiteAnalogique(snr);
+			}
+			transmetteurAnalogiqueBruiteReel.connecter(transmetteurAnalogiqueBruite);
+			if(affichage&&(snr!=100000f)){
+				sondeDestinationAnalogiqueBruite = new SondeAnalogique("Sonde Destination Analogique avec Bruit");
+				transmetteurAnalogiqueBruite.connecter(sondeDestinationAnalogiqueBruite);
+			}
+			
+			//Transmetteur Analogique parfait//
+			transmetteurAnalogique = new TransmetteurParfaitAnalogique();
+			transmetteurAnalogiqueBruite.connecter(transmetteurAnalogique);
+			if(affichage&&(snr==100000f)&&!(decalage[0]||decalage[1]||decalage[2]||decalage[3]||decalage[4])){
+				sondeDestinationAnalogique = new SondeAnalogique("Sonde Destination Analogique");
+				transmetteurAnalogique.connecter(sondeDestinationAnalogique);
+			}
+			//Sortie analogique via le transmetteurAnalogique//
+			
+			//RecepteurAnalogique
+			recepteurAnalogique = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons, decalage, dt, ar);
+			transmetteurAnalogique.connecter(recepteurAnalogique);
+			
+			
+			//Transmetteur Logique parfait//
+			transmetteurLogiqueReception = new TransmetteurParfait();
+			recepteurAnalogique.connecter(transmetteurLogiqueReception);
+
+			//Sortie logique via le transmetteurLogique//
+			
+			//Destination logique//
+			destination = new DestinationFinale();
+			
+			//Transducteur//
+			if(transducteur){
+				transducteurReception = new TransducteurReception();
+				transmetteurLogiqueReception.connecter(transducteurReception);
+				transducteurReception.connecter(destination);
+				if(affichage){
+					sondeDestinationTransducte = new SondeLogique("Sonde Destination Transducté", 100);
+					transmetteurLogiqueReception.connecter(sondeDestinationTransducte);
+					sondeDestination = new SondeLogique("Sonde Destination", 100);
+					transducteurReception.connecter(sondeDestination);
+				}
+			}
+			else{
+				transmetteurLogiqueReception.connecter(destination);
+				if(affichage){
+					sondeDestination = new SondeLogique("Sonde Destination", 100);
+					transmetteurLogiqueReception.connecter(sondeDestination);
+				}
 			}
 			
       }
@@ -333,7 +354,7 @@
             	if(args[i].matches("[1-5]")){
             		decalage[Integer.parseInt(args[i])-1] = true;
             		i++;
-                	if(args[i].matches("[1-9][0-9]*")){
+                	if((args[i].matches("[1-9][0-9]*")&&(Integer.parseInt(args[i])>=nbEchantillons))){
                 		dt[Integer.parseInt(args[i-1])-1] = Integer.parseInt(args[i]);
                 		i++;
                 		if(args[i].matches("1|(0\\.[0-9]*[1-9])")){
@@ -350,6 +371,9 @@
             	else{
                		throw new ArgumentsException("Valeur de parametre -ti trajet invalide : " + args[i]);	
             	}
+            }
+            else if (args[i].matches("-transducteur")){
+            	transducteur = true;
             }
             else throw new ArgumentsException("Option invalide :"+ args[i]);
                   
@@ -368,18 +392,19 @@
       public void execute() throws Exception {      
     	 try{
 	         source.emettre();
+	         if(transducteur){
+	        	 transducteurEmission.emettre();
+	         }
+	         transmetteurLogiqueEmission.emettre();
 	         emetteurAnalogique.emettre();
-	         
-	         transmetteurLogique.emettre();
-	         transmetteurAnalogique.emettre();
-	         transmetteurAnalogiqueBruite.emettre();
 	         transmetteurAnalogiqueBruiteReel.emettre();
-	         
+	         transmetteurAnalogiqueBruite.emettre();
+	         transmetteurAnalogique.emettre();
 	         recepteurAnalogique.emettre();
-	         recepteurAnalogiqueBruite.emettre();
-	         recepteurAnalogiqueBruiteReel.emettre();
-	         
-	        
+	         transmetteurLogiqueReception.emettre();
+	         if(transducteur){
+	        	 transducteurReception.emettre();
+	         }
     	 }
     	 catch (Exception e){
     		 throw new Exception("Erreur lors de l'envoi sur la chaine de transmission");
@@ -387,10 +412,10 @@
       }
      	   
       public float  calculTauxErreurBinaire() {
-      
+    	  
       	Information<Boolean> informationEmise = source.getInformationEmise();
-      	Information<Boolean> informationRecue = destinationAnalogiqueBruiteReel.getInformationRecue();
-      	
+      	Information<Boolean> informationRecue = destination.getInformationRecue();
+
       	float nbErreur = 0;
       	
       	for(int i = 0; i < informationEmise.nbElements(); i++){
@@ -398,8 +423,8 @@
       			nbErreur++;
       		}
       	}
-      	
-         return  nbErreur/(float)informationEmise.nbElements();
+      	return  nbErreur/(float)informationEmise.nbElements();
+
       }
    
    

@@ -1,6 +1,7 @@
 package transmetteursTest;
 
 import static org.junit.Assert.*;
+import junit.framework.Assert;
 import information.Information;
 import information.InformationNonConforme;
 
@@ -15,12 +16,12 @@ public class TransmetteurBruiteAnalogiqueReelTest {
 	private Information<Float> inf_recue;
 	private Information<Float> inf_generee;
 	private TransmetteurBruiteAnalogiqueReel transmetteur;
-	private float snr = 0.0f;
+	private float snr = 100f;
 	private float aMax = 2.0f;
 	private float aMin = 0.0f;
 	private Double sigma = 2.0;
 	private int longueurMsg = 10000;
-	private int dt[] = {10};
+	private int dt[] = {3};
 	private Float ar[] = {0.5f};
 	private Boolean decalage[] = {true,false,false,false,false};
 	
@@ -66,13 +67,17 @@ public class TransmetteurBruiteAnalogiqueReelTest {
 
 	@Test
 	public void testDecalerSignal() {
+		transmetteur.setSigma(0.0);
+		transmetteur.ajouterBruit();
 		transmetteur.ajouterDecalage();
-		inf_generee = transmetteur.getInformationDeDecalage();
-		for(int i = 0;i<longueurMsg;i++){
-			if((i>dt[1])&&(i<(dt[1]+3))){
-				assertEquals("La valeur du "+i+"eme élément devrait être"+aMax,inf_generee, aMax);
+		inf_generee = transmetteur.getInformationATransmettre();
+		Float f = 0f;
+		for(int i = 0;i<inf_generee.nbElements();i++){
+			f = (float) round(inf_generee.iemeElement(i),3);
+			if((i>=dt[0])||(i==0)){
+				Assert.assertEquals("La valeur du "+i+"eme élément devrait être "+aMax, aMax, f);
 			}
-			else assertEquals("La valeur du "+i+"eme élément devrait être"+aMin,inf_generee, aMin);
+			else Assert.assertEquals("La valeur du "+i+"eme élément devrait être "+aMin,  aMin, f);
 		}
 	}
 

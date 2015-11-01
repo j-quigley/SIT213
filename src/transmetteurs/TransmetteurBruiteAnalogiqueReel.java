@@ -52,8 +52,8 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 		return informationGeneree;
 	}
 	
-	public Information<Float> getInformationDeDecalage(){
-		return informationDeDecalage;
+	public Information<Float> getInformationATransmettre(){
+		return informationATransmettre;
 	}
 	
 	public Information <Float> decalerSignal (float ar, int dt){

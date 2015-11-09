@@ -8,6 +8,9 @@ public class TransducteurReception extends Transmetteur<Boolean, Boolean>{
 
 	private Information<Boolean> informationDecodee;
 	
+	/**
+	 * Constructeur du transducteur de réception
+	 */
 	public TransducteurReception(){
 		super();
 		informationRecue = new Information<Boolean>();
@@ -22,6 +25,19 @@ public class TransducteurReception extends Transmetteur<Boolean, Boolean>{
 		}
 	}
 	
+	/**
+	 * Décodage de l'information
+	 * 
+	 * 000 -> 0
+	 * 001 -> 1
+	 * 010 -> 0
+	 * 011 -> 0
+	 * 100 -> 1
+	 * 101 -> 1
+	 * 110 -> 0
+	 * 111 -> 1
+	 * 
+	 */
 	public void decoder(){
 		for(int i=0;i<informationRecue.nbElements();i++){
 			if(informationRecue.iemeElement(i)){

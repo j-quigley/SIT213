@@ -17,6 +17,12 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 	
 	private Information <Float>  informationGeneree;
 	
+	/**
+	 * 
+	 * @param snr
+	 * 
+	 * Constructeur d'un transmetteur bruite analogique prenant en paramètre le rapport signal sur bruit désiré en dB
+	 */
 	public TransmetteurBruiteAnalogique(float snr) {
 		super();
 		informationRecue = new Information<Float>();
@@ -25,6 +31,13 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 	    this.snr = snr;
 	}
 	
+	/**
+	 * 
+	 * @param snr
+	 * @param seed
+	 *
+	 * Constructeur d'un transmetteur bruite analogique prenant en paramètre le rapport signal sur bruit désiré en dB ainsi que la seed
+	 */
 	public TransmetteurBruiteAnalogique(float snr, int seed) {
 		super();
 		informationRecue = new Information<Float>();
@@ -34,6 +47,11 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 	    this.seed = seed;
 	}
 	
+	/**
+	 * Fonction de génération du bruit qui retourne en flottant un bruit blanc gaussien b 
+	 * 
+	 * @return b
+	 */
 	public float genererBruit (){
 		Random rand = new Random();
 		if(seed != -100000){
@@ -58,6 +76,9 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 
 	}
 	
+	/**
+	 * Fonction d'ajout du bruit à l'information recue
+	 */
 	public void ajouterBruit() {
 		ps /= informationRecue.nbElements();
 		pb = ps / Math.pow(10,snr/10);
@@ -81,10 +102,20 @@ public class TransmetteurBruiteAnalogique extends Transmetteur<Float, Float> {
 		System.out.println(informationGeneree.toString());
 	}
 	
+	/**
+	 * Fonction get de l'information générée
+	 * 
+	 * @return information Generee
+	 */
 	public Information<Float> getInformationGeneree(){
 		return informationGeneree;
 	}
 	
+	/**
+	 * Fonction set de sigma
+	 * 
+	 * @param sigma
+	 */
 	public void setSigma(Double sigma){
 		sigma_b = sigma;
 	}

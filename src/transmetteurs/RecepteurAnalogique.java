@@ -1,9 +1,9 @@
 package transmetteurs;
 
-import visualisations.SondeAnalogique;
 import destinations.DestinationInterface;
 import information.Information;
 import information.InformationNonConforme;
+
 import java.lang.Math;
 
 public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
@@ -82,6 +82,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 	
 	/**
 	 * Fonction de decodage RZ,NRZ ou NRZT
+	 * RŽduction du multi-trajet et du bruit
 	 */
 	public void decoder(){
 
@@ -97,12 +98,14 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 			float retrait = 0;
 			for(int j=0; j<5; j++){
 				if(decalage[j]&&i>=dt[j]){
-					int floor = (int)Math.floor((i-dt[j])/nbEchantillons);
-					if(informationDecodee.iemeElement(floor)){
-						retrait += Math.abs(aMax*ar[j]);
-					}
-					else{
-						retrait += Math.abs(aMin*ar[j]);
+					if(((i+1)%nbEchantillons > nbEchantillons/3)&&((i+1)%nbEchantillons <= 2*nbEchantillons/3)){
+						int floor = (int)Math.floor((i-dt[j])/nbEchantillons);
+						if(informationDecodee.iemeElement(floor)){
+							retrait += aMax*ar[j];
+						}
+						else{
+							retrait += aMin*ar[j];
+						}
 					}
 				}
 			}
@@ -126,7 +129,6 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 				sommes = 0;
 			}
 		}
-		
 	}
 
 	@Override

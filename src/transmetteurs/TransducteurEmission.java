@@ -7,7 +7,9 @@ import information.InformationNonConforme;
 public class TransducteurEmission extends Transmetteur<Boolean, Boolean> {
 
 	private Information<Boolean> informationCodee;
-	
+	/**
+	 * Constructeur du transducteur d'Žmission
+	 */
 	public TransducteurEmission(){
 		super();
 		informationRecue = new Information<Boolean>();
@@ -22,6 +24,11 @@ public class TransducteurEmission extends Transmetteur<Boolean, Boolean> {
 		}
 	}
 	
+	/**
+	 * Codage de l'information
+	 * 1 -> 101
+	 * 0 -> 010
+	 */
 	public void coder(){
 		for(int i=0; i<informationRecue.nbElements(); i++){
 			if(informationRecue.iemeElement(i)){

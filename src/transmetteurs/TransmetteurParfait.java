@@ -7,19 +7,23 @@ import information.InformationNonConforme;
 
 public class TransmetteurParfait extends Transmetteur<Boolean, Boolean>{
 
+	/**
+	 * Constructeur d'un transmetteur logique parfait
+	 */
     public TransmetteurParfait() {
         super();
         informationRecue = new Information<Boolean>();
         informationEmise = new Information<Boolean>();
      }
 
-	
+    @Override
 	public  void recevoir(Information <Boolean> information) throws InformationNonConforme{
 		for(int i = 0; i<information.nbElements(); i++){
 			informationRecue.add(information.iemeElement(i));
 		}
 	}
 
+    @Override
 	public void emettre() throws InformationNonConforme {
 		// émission vers les composants connectés  
         for (DestinationInterface <Boolean> destinationConnectee : destinationsConnectees) {

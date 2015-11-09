@@ -32,7 +32,7 @@ public class SourceFixe extends Source<Boolean>{
     }
     /**
      * retourne l'information générée
-     * @return une information
+     * @return informationGeneree
      */
     public Information<Boolean> getInformationGeneree(){
     	return informationGeneree;
@@ -40,7 +40,7 @@ public class SourceFixe extends Source<Boolean>{
     
     /**
      * retourne l'information émise
-     * @return une information
+     * @return informationEmise
      */
     public Information<Boolean> getInformationEmise(){
     	return informationEmise;

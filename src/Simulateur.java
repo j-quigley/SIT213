@@ -193,7 +193,7 @@
 			}
 			//Sortie analogique via le transmetteurAnalogique//
 			
-			//RecepteurAnalogique
+			//RecepteurAnalogique//
 			recepteurAnalogique = new RecepteurAnalogique(aMin, aMax, codage, nbEchantillons, decalage, dt, ar);
 			transmetteurAnalogique.connecter(recepteurAnalogique);
 			

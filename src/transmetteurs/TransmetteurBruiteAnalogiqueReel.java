@@ -15,6 +15,17 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	private int dt[] = new int[5];
 	private Float ar[] = new Float[5];
 	
+	/**
+	 * 
+	 * @param decalage
+	 * @param dt
+	 * @param ar
+	 * 
+	 * Constructeur d'une transmetteur bruite analogique reel qui prend en entré :
+	 * un tableau de boolean indiquant le nombre de trajets multiples,
+	 * un tableau d'entier indiquant le décalage temporelle en nombre d'échantillons pour chaque multi trajet,
+	 * un tableau de float infiquant l'atténuation de chaque trajet multiple par raport au signal de base
+	 */
 	public TransmetteurBruiteAnalogiqueReel(Boolean decalage[],int dt [], Float ar[]) {
 		super();
 		informationRecue = new Information<Float>();
@@ -25,6 +36,11 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 	    this.decalage = decalage;
 	}
 	
+	/**
+	 * Fonction get de l'information générée
+	 * 
+	 * @return informationGeneree
+	 */
 	public Information<Float> getInformationGeneree(){
 		return informationGeneree;
 	}
@@ -56,6 +72,9 @@ public class TransmetteurBruiteAnalogiqueReel extends Transmetteur<Float, Float>
 		}
 	}
 	
+	/**
+	 * Fonction d'ajout des multi-trajets
+	 */
 	public void ajouterDecalage() {
 		for(int i=0;i<5;i++){
 			if (decalage[i]) {

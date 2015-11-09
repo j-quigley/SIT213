@@ -30,11 +30,15 @@ public class SourceAleatoire extends Source<Boolean>{
     
     /**
      * retourne l'information émise
-     * @return une information
+     * @return informationEmise
      */
     public Information<Boolean> getInformationEmise(){
     	return informationEmise;
     }
+    /**
+     * retour l'information générée
+     * @return informationGeneree
+     */
     public Information<Boolean> getInformationGeneree(){
     	return informationGeneree;
     }

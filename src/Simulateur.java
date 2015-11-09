@@ -326,7 +326,7 @@
             }
             else if (args[i].matches("-ampl")){
             	i++; 
-            	if(args[i].matches("-?[0-9]+(\\.[0-9]+)?")){
+            	if(args[i].matches("-?[0-9]+(\\.[0-9]+)?")&&(Float.parseFloat(args[i])<Float.parseFloat(args[i+1]))){
             		aMin = Float.parseFloat(args[i]);
             		i++; 
             		if((args[i].matches("-?[0-9]+(\\.[0-9]+)?"))&&(aMin<Float.parseFloat(args[i]))){

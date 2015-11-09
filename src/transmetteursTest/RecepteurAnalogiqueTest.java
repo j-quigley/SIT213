@@ -26,6 +26,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -81,9 +83,6 @@ public class RecepteurAnalogiqueTest {
 		tpaNRZT.connecter(raNRZT);
 		
 		source.emettre();
-		eaRZ.coder();
-		eaNRZ.coder();
-		eaNRZT.coder();
 		eaRZ.emettre();
 		eaNRZ.emettre();
 		eaNRZT.emettre();
@@ -103,15 +102,15 @@ public class RecepteurAnalogiqueTest {
 
 	@Test
 	public void testDecoderRZ() {
-	  	assertTrue(raRZ.getInformationDecodee().equals(inf));
+	  	Assert.assertEquals("",raRZ.getInformationDecodee(),inf);
 	}
 	@Test
 	public void testDecoderNRZ() {
-	  	assertTrue(raNRZ.getInformationDecodee().equals(inf));
+		Assert.assertEquals("",raNRZ.getInformationDecodee(),inf);
 	}
 	@Test
 	public void testDecoderNRZT() {
-	  	assertTrue(raNRZT.getInformationDecodee().equals(inf));
+		Assert.assertEquals("",raNRZT.getInformationDecodee(),inf);
 	}
 
 }

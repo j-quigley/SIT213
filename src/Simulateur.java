@@ -313,7 +313,7 @@
             else if (args[i].matches("-nbEch")){
             	i++; 
             	if(args[i].matches("[1-9][0-9]*")){
-            		if(((codage.equals("RZ"))&&(Integer.parseInt(args[i])>=6))||((codage.equals("NRZ"))&&(Integer.parseInt(args[i])>=9))||((codage.equals("NRZT"))&&(Integer.parseInt(args[i])>=18))){
+            		if(((codage.equals("RZ"))&&(Integer.parseInt(args[i])>=6))||((codage.equals("NRZT"))&&(Integer.parseInt(args[i])>=9))||((codage.equals("NRZ"))&&(Integer.parseInt(args[i])>=18))){
             		nbEchantillons = Integer.parseInt(args[i]);
             		}
             		else{

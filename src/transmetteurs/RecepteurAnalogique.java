@@ -6,6 +6,7 @@ import information.InformationNonConforme;
 
 import java.lang.Math;
 
+
 public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 
 	/**
@@ -98,10 +99,30 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 			float retrait = 0;
 			for(int j=0; j<5; j++){
 				if(decalage[j]&&i>=dt[j]){
-					if(((i+1)%nbEchantillons > nbEchantillons/3)&&((i+1)%nbEchantillons <= 2*nbEchantillons/3)){
+					if(((i+1)%nbEchantillons > nbEchantillons/3)&&((i+1)%nbEchantillons <= 2*nbEchantillons/3)){ //retrait des multi-trajets sur les Žchantillons utiles
 						int floor = (int)Math.floor((i-dt[j])/nbEchantillons);
 						if(informationDecodee.iemeElement(floor)){
-							retrait += aMax*ar[j];
+							if(codage.equals("RZ")){
+								if(((i+1-dt[j])%nbEchantillons > nbEchantillons/3)&&((i+1-dt[j])%nbEchantillons <= 2*nbEchantillons/3)){
+									retrait += aMax*ar[j];
+								}
+							}
+							else if(codage.equals("NRZ")){
+								retrait += aMax*ar[j];
+							}
+							else if(codage.equals("NRZT")){
+								if(((i+1-dt[j])%nbEchantillons)<=nbEchantillons/3){
+									if((i+1-dt[j])!=0){
+										retrait += (aMin+((aMax-aMin)/(nbEchantillons/3))*((i+1-dt[j])%nbEchantillons)-1)*ar[j];
+									}
+								}
+								else if((((i+1-dt[j])%nbEchantillons)>nbEchantillons/3)&&(((i+1-dt[j])%nbEchantillons)<=nbEchantillons/3*2)){
+									retrait += aMax*ar[j];
+								}
+								else{
+									retrait += (aMin+((aMax-aMin)/(nbEchantillons/3))*(nbEchantillons-(i+1-dt[j])%nbEchantillons))*ar[j];
+								}
+							}
 						}
 						else{
 							retrait += aMin*ar[j];
@@ -120,7 +141,7 @@ public class RecepteurAnalogique extends Transmetteur<Float, Boolean>{
 			}
 			if((i+1)%nbEchantillons == 0){
 				moyenne = sommes/compteur;
-				if((moyenne > (aMax-(aMax/5)))/*&&(moyenne < (aMax+(aMax/5)))*/){
+				if((moyenne > (aMax-(aMax/5)))&&(moyenne < (aMax+(aMax/5)))){
 					valeurDecodee = true;
 				}
 				informationDecodee.add(valeurDecodee);
